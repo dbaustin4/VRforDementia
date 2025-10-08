@@ -7,28 +7,20 @@ public class PickUp : MonoBehaviour
     private Transform controller;
     private bool isTouching = false;
     private bool isPickedUp = false;
-    private Vector3 startPos;
-    private Quaternion startRot;
+    private Rigidbody rb;
 
     void Start()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        // If object is currently picked up, follow controller
         if (isPickedUp && controller != null)
         {
+            // Make the object follow the controller
             transform.position = controller.position;
             transform.rotation = controller.rotation;
-        }
-        else if (!isPickedUp)
-        {
-            // Optional: reset to start position
-            transform.position = startPos;
-            transform.rotation = startRot;
         }
     }
 
@@ -36,9 +28,8 @@ public class PickUp : MonoBehaviour
     {
         if (other.CompareTag("Controller"))
         {
-            controller = other.transform;
             isTouching = true;
-            Debug.Log($"{name} touched by controller");
+            controller = other.transform;
         }
     }
 
@@ -48,7 +39,6 @@ public class PickUp : MonoBehaviour
         {
             isTouching = false;
             controller = null;
-            Debug.Log($"{name} released from controller trigger");
         }
     }
 
@@ -56,13 +46,19 @@ public class PickUp : MonoBehaviour
     {
         if (triggerPressed && isTouching)
         {
+            // Pick up
             isPickedUp = true;
+            if (rb != null) rb.isKinematic = true; // disable physics while held
             Debug.Log($"{name} picked up");
         }
         else if (!triggerPressed && isPickedUp)
         {
+            // Drop
             isPickedUp = false;
+            if (rb != null) rb.isKinematic = false; // re-enable physics
+            controller = null;
             Debug.Log($"{name} dropped");
         }
     }
 }
+
