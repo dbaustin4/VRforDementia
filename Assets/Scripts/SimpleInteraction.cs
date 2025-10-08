@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,12 +19,27 @@ public class SimpleInteraction : MonoBehaviour
         float triggerLeft = OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger);
         float triggerRight = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger);
 
-        if (triggerRight > 0.9f && fire == false)
+        Debug.Log($"Left Trigger: {triggerLeft}, Right Trigger: {triggerRight}");
+
+        if (triggerRight > 0.9f && !fire)
         {
             fire = true;
-            Instantiate(Ball, new Vector3(Random.Range(-3, 3), Random.Range(1, 4), Random.Range(-3, 3)), Quaternion.identity);
+            Debug.Log("Fire!");
+            Instantiate(Ball, new Vector3(Random.Range(3, 5), Random.Range(1, 2), Random.Range(8, 9)), Quaternion.identity);
         }
-        if(fire == false && triggerRight < 0.1f)
+
+        if (fire && triggerRight < 0.1f)
+        {
+            fire = false;
+        }
+        if (triggerLeft > 0.9f && !fire)
+        {
+            fire = true;
+            Debug.Log("Fire!");
+            Instantiate(Ball, new Vector3(Random.Range(3, 5), Random.Range(1, 2), Random.Range(8, 9)), Quaternion.identity);
+        }
+
+        if (fire && triggerLeft < 0.1f)
         {
             fire = false;
         }
