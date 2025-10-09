@@ -9,6 +9,7 @@ Shader "Perception/Simple Post"
     SubShader
     {
         Tags { "RenderType"="Opaque" "RenderPipeline"="UniversalPipeline" }
+
         Pass
         {
             Name "Perception"
@@ -17,30 +18,30 @@ Shader "Perception/Simple Post"
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ UNITY_SINGLE_PASS_STEREO
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            // Full Screen Pass source:
-            TEXTURE2D_X(_BlitTexture);  SAMPLER(sampler_BlitTexture);
-            // (Fallback if ever needed)
-            TEXTURE2D_X(_CameraColorTexture); SAMPLER(sampler_CameraColorTexture);
+            // Source from Full Screen Pass:
+            TEXTURE2D_X(_BlitTexture);
+            SAMPLER(sampler_BlitTexture);
 
-            float _VignetteStrength;
-            float _Contrast;
-            float _Desaturation;
+            float _VignetteStrength;   // 0..1
+            float _Contrast;           // -1..+1
+            float _Desaturation;       // 0..1
 
-            struct VIn  { float4 pos: POSITION; float2 uv: TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID };
-            struct VOut { float4 pos: SV_POSITION; float2 uv: TEXCOORD0; UNITY_VERTEX_INPUT_INSTANCE_ID UNITY_VERTEX_OUTPUT_STEREO };
+            struct Attributes { uint vertexID : SV_VertexID; };
+            struct Varyings   { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
 
-            VOut Vert (VIn i)
+            // Fullscreen triangle without Fullscreen.hlsl
+            Varyings Vert (Attributes a)
             {
-                VOut o;
-                UNITY_SETUP_INSTANCE_ID(i);
-                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-                o.pos = TransformObjectToHClip(i.pos.xyz);
-                o.uv  = i.uv;
+                Varyings o;
+                float2 uv = float2((a.vertexID << 1) & 2, a.vertexID & 2);   // (0,0), (2,0), (0,2)
+                o.positionCS = float4(uv * 2.0 - 1.0, 0.0, 1.0);             // NDC
+                #if UNITY_UV_STARTS_AT_TOP
+                    uv.y = 1.0 - uv.y;
+                #endif
+                o.uv = uv;
                 return o;
             }
 
@@ -48,7 +49,7 @@ Shader "Perception/Simple Post"
             float3 LerpDesat    (float3 c, float s) { float g = dot(c, float3(0.2126,0.7152,0.0722)); return lerp(c, g.xxx, saturate(s)); }
             float   VignetteMask(float2 uv)         { float2 d = uv*2.0 - 1.0; float r = dot(d,d); return saturate(1.0 - r); }
 
-            half4 Frag (VOut i) : SV_Target
+            half4 Frag (Varyings i) : SV_Target
             {
                 float3 col = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_BlitTexture, i.uv).rgb;
                 col = LerpDesat(col, _Desaturation);
