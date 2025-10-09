@@ -5,9 +5,13 @@ using UnityEngine;
 public class PickUp : MonoBehaviour
 {
     private Transform controller;
+    private Collider playerCapsuleCollider;
+    private Rigidbody rb;
     private bool isTouching = false;
     private bool isPickedUp = false;
-    private Rigidbody rb;
+    private bool wasTriggerPressed = false;
+    private Vector3 lastPosition;
+    private Vector3 controllerVelocity;
 
     void Start()
     {
@@ -16,6 +20,11 @@ public class PickUp : MonoBehaviour
 
     void Update()
     {
+        if (controller != null)
+        {
+            controllerVelocity = (controller.position - lastPosition) / Time.deltaTime;
+            lastPosition = controller.position;
+        }
         if (isPickedUp && controller != null)
         {
             // Make the object follow the controller
@@ -28,8 +37,10 @@ public class PickUp : MonoBehaviour
     {
         if (other.CompareTag("Controller"))
         {
-            isTouching = true;
             controller = other.transform;
+            playerCapsuleCollider = other.GetComponent<Collider>();
+            lastPosition = controller.position;
+            isTouching = true;
         }
     }
 
@@ -38,27 +49,36 @@ public class PickUp : MonoBehaviour
         if (other.CompareTag("Controller"))
         {
             isTouching = false;
-            controller = null;
         }
     }
 
     public void TryPickup(bool triggerPressed)
     {
-        if (triggerPressed && isTouching)
+        if (triggerPressed && !wasTriggerPressed)
         {
-            // Pick up
-            isPickedUp = true;
-            if (rb != null) rb.isKinematic = true; // disable physics while held
-            Debug.Log($"{name} picked up");
+            if (isTouching && !isPickedUp)
+            {
+                isPickedUp = true;
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                if(playerCapsuleCollider && GetComponent<Collider>())
+                {
+                    Physics.IgnoreCollision(playerCapsuleCollider, GetComponent<Collider>(), true);
+                }
+            }
+            else if (isPickedUp)
+            {
+                isPickedUp = false;
+                rb.isKinematic = false;
+                rb.useGravity = true;
+                rb.velocity = controllerVelocity;
+                if(playerCapsuleCollider && GetComponent<Collider>())
+                {
+                    Physics.IgnoreCollision(playerCapsuleCollider, GetComponent<Collider>(), false);
+                }
+            }
         }
-        else if (!triggerPressed && isPickedUp)
-        {
-            // Drop
-            isPickedUp = false;
-            if (rb != null) rb.isKinematic = false; // re-enable physics
-            controller = null;
-            Debug.Log($"{name} dropped");
-        }
+        wasTriggerPressed = triggerPressed;
     }
 }
 
