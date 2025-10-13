@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Controller
   - RightIndex
+  - RightThumb
+  - RightMiddle
+  - RightPalm
   layers:
   - Default
   - TransparentFX
