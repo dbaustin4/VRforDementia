@@ -1,0 +1,8 @@
+﻿| File Name                     | Shader Name                   | Purpose                                                                                            |
+| ----------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------|
+| `SimplePerceptionPost.shader` | `Perception/Simple Post`      | Base vignette, contrast, desaturation — the “baseline perception distortion”                       |
+| `HallucinationFog.shader`     | `Perception/HallucinationFog` | Wavy fog or “cloudy vision” to simulate hallucination/mist                                         |
+| `MaskedBlur.shader`           | `Perception/MaskedBlur`       | Peripheral or selective blur (used for tunnel vision or depth misperception)						 |
+| `IntangibleDither.shader`     | `Perception/IntangibleDither` | Fading, “unreal” texture effect for unreadable text or intangible objects                          |
+| `ScreenTint.shader`           | `Perception/ScreenTint`       | Global mood tint + vignette pulse (emotion/tension cues)                                           |
+| `Afterimage.shader`           | `Perception/Afterimage`       | Stylized ghost/double-vision post-effect  *(simplified URP version working)*                       |

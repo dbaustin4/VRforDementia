@@ -1,0 +1,4 @@
+﻿| File Name                                    | Purpose                                                           |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| `FullScreenPassRendererFeature.asset`        | Adds the chosen shader material as a screen-space effect in URP ✅ |
+| *(optional upcoming)* `MaskedBlurFeature.cs` | Will handle RenderTexture mask for the MaskedBlur shader 🚧       |
