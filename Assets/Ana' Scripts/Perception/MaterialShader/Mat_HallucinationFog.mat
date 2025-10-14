@@ -133,5 +133,5 @@ Material:
     - _Scroll1: {r: 0.02, g: 0.01, b: 0, a: 0}
     - _Scroll2: {r: -0.015, g: 0.01, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Tint: {r: 0, g: 0, b: 1, a: 0.25}
+    - _Tint: {r: 0, g: 0, b: 1, a: 0}
   m_BuildTextureStacks: []

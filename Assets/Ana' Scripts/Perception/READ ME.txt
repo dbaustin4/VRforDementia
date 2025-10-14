@@ -1,0 +1,34 @@
+﻿| #     | Shader File                                                  | Material Name          | Script(s) Used                                                    | Placement / Setup                                                                                                         | What It Does (Purpose)                                                                                                            |
+| ----- | ------------------------------------------------------------ | ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **1** | **SimplePerceptionPost.shader**<br>`Perception/Simple Post`  | `Mat_PerceptionPost`   | `PerceptionMatDriver.cs`<br>or `XRPerceptionEffectsController.cs` | Added as **Full Screen Pass** (1st in order)                                                                              | Narrows peripheral vision, lowers contrast & desaturates — simulates **tunnel vision**, fatigue, or dopamine loss.                |
+| **2** | **HallucinationFog.shader**<br>`Perception/HallucinationFog` | `Mat_HallucinationFog` | `FogDriver.cs`<br>or `XRPerceptionEffectsController.cs`           | Apply to **quads** in front of the camera or in world space                                                               | Creates drifting translucent fog/noise — simulates **hallucinations**, confusion, or visual haze.                                 |
+| **3** | **MaskedBlur.shader**<br>`Perception/MaskedBlur`             | `Mat_MaskedBlur`       | optional: `XRPerceptionEffectsController.cs`                      | Add as **Full Screen Pass** (2nd in order)<br>MaskCamera → Output Texture = `RT_Mask` (Culling Mask: *Important Details*) | Blurs only masked details (e.g. signs, numbers, text) — simulates **difficulty recognizing key details**.                         |
+| **4** | **IntangibleDither.shader**<br>`Perception/IntangibleDither` | `Mat_IntangibleDither` | *(none required)*                                                 | Apply to specific **objects or TMP text**                                                                                 | Adds alpha dithering & slight UV jitter — simulates **unstable / intangible visuals**, e.g. fading letters or disappearing items. |
+| **5** | **ScreenTint.shader**<br>`Perception/ScreenTint`             | `Mat_ScreenTint`       | `XRPerceptionEffectsController.cs`                                | Add as **Full Screen Pass** (after blur)                                                                                  | Applies a subtle colored overlay & pulse — conveys **mood, sleepiness, or emotional tone**.                                       |
+| **6** | **Afterimage.shader**<br>`Perception/Afterimage`             | `Mat_Afterimage`       | *(none needed for simplified version)*                            | Add as **Full Screen Pass** (final layer)                                                                                 | Slight offset ghost image — simulates **double vision / lingering afterimage**.                                                   |
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
+	Text & Reading Perception Scripts (no shader)
+| Script                 | Attach To           | Effect                 | Description                                                                                            |
+| ---------------------- | ------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| `TMPWobble.cs`         | TextMeshPro objects | Vertex wobble          | Makes text “swim” or shimmer slightly — simulates **reading instability**.                             |
+| `TMPGlyphScrambler.cs` | TextMeshPro objects | Character substitution | Randomly swaps similar characters (e.g. O/0, I/1, S/5) — simulates **difficulty reading / confusion**. |
+
+
+
+	Camera / Player Motion Helpers (no shader)
+| Script              | Attach To               | Effect                   | Description                                                                        |
+| ------------------- | ----------------------- | ------------------------ | ---------------------------------------------------------------------------------- |
+| `InputSmoothing.cs` | Main Camera (in XR Rig) | Delayed head/gaze motion | Adds tiny time lag to camera rotation — simulates **slowed response / focus lag**. |
+| `WorldSway.cs`      | XR Rig root object      | Mild body sway           | Adds subtle body oscillation — simulates **balance issues or instability**.        |
+
+
+
+	Global Control
+| Script                             | Attach To                 | Purpose                                      | Controls                                                                                                                                                  |
+| ---------------------------------- | ------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `XRPerceptionEffectsController.cs` | System (empty GameObject) | Master controller for all perception shaders | One slider (`intensity`) that drives all key materials: <br>• Vignette / contrast / desaturation<br>• Fog alpha<br>• Screen tint pulse<br>• Blur strength |
