@@ -1,0 +1,4 @@
+﻿| File Name                                 | Purpose                                                                                 |
+| ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| `AfterimageCapture.cs`                    | Handles echo-frame buffer if using trail mode (optional warning can be ignored for now) |
+| *(coming soon)* `MaskedBlurController.cs` | Will dynamically feed mask to MaskedBlur material                                       |

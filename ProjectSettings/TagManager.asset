@@ -5,18 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - Controller
-  - RightIndex
-  - RightThumb
-  - RightMiddle
-  - RightPalm
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Overlay UI
   - Water
   - UI
-  - 
+  - Important Details
   - 
   - 
   - 
