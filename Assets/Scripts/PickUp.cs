@@ -5,30 +5,31 @@ using UnityEngine;
 public class PickUp : MonoBehaviour
 {
     private Transform controller;
+    private Collider playerCapsuleCollider;
+    private Rigidbody rb;
     private bool isTouching = false;
     private bool isPickedUp = false;
-    private Vector3 startPos;
-    private Quaternion startRot;
+    private bool wasTriggerPressed = false;
+    private Vector3 lastPosition;
+    private Vector3 controllerVelocity;
 
     void Start()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        // If object is currently picked up, follow controller
+        if (controller != null)
+        {
+            controllerVelocity = (controller.position - lastPosition) / Time.deltaTime;
+            lastPosition = controller.position;
+        }
         if (isPickedUp && controller != null)
         {
+            // Make the object follow the controller
             transform.position = controller.position;
             transform.rotation = controller.rotation;
-        }
-        else if (!isPickedUp)
-        {
-            // Optional: reset to start position
-            transform.position = startPos;
-            transform.rotation = startRot;
         }
     }
 
@@ -37,8 +38,9 @@ public class PickUp : MonoBehaviour
         if (other.CompareTag("Controller"))
         {
             controller = other.transform;
+            playerCapsuleCollider = other.GetComponent<Collider>();
+            lastPosition = controller.position;
             isTouching = true;
-            Debug.Log($"{name} touched by controller");
         }
     }
 
@@ -47,22 +49,36 @@ public class PickUp : MonoBehaviour
         if (other.CompareTag("Controller"))
         {
             isTouching = false;
-            controller = null;
-            Debug.Log($"{name} released from controller trigger");
         }
     }
 
     public void TryPickup(bool triggerPressed)
     {
-        if (triggerPressed && isTouching)
+        if (triggerPressed && !wasTriggerPressed)
         {
-            isPickedUp = true;
-            Debug.Log($"{name} picked up");
+            if (isTouching && !isPickedUp)
+            {
+                isPickedUp = true;
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                if(playerCapsuleCollider && GetComponent<Collider>())
+                {
+                    Physics.IgnoreCollision(playerCapsuleCollider, GetComponent<Collider>(), true);
+                }
+            }
+            else if (isPickedUp)
+            {
+                isPickedUp = false;
+                rb.isKinematic = false;
+                rb.useGravity = true;
+                rb.velocity = controllerVelocity;
+                if(playerCapsuleCollider && GetComponent<Collider>())
+                {
+                    Physics.IgnoreCollision(playerCapsuleCollider, GetComponent<Collider>(), false);
+                }
+            }
         }
-        else if (!triggerPressed && isPickedUp)
-        {
-            isPickedUp = false;
-            Debug.Log($"{name} dropped");
-        }
+        wasTriggerPressed = triggerPressed;
     }
 }
+
