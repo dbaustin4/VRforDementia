@@ -6,17 +6,20 @@ using UnityEngine.Events;
 public class StoryGameManager : MonoBehaviour
 {
     [Header("Data")]
-    public List<Act> acts = new();         // Fill your acts/chapters/dialogues here in Inspector
+    public List<Act> acts = new();
 
     [Header("UI Hook")]
-    public DialogueUI dialogueUI;           // Assign a DialogueUI in scene
+    public DialogueUI dialogueUI;
 
     [Header("Audio")]
-    public AudioSource voiceSource;         // Optional: play voice per line (assign in Inspector)
+    public AudioSource voiceSource;
 
     [Header("Options")]
     public bool autoAdvanceOnVoiceEnd = true;
-    public KeyCode debugAdvanceKey = KeyCode.Space; // for quick desktop testing
+    public KeyCode debugAdvanceKey = KeyCode.Space;
+
+    [Header("Mood / Lighting")]
+    public MoodFXDirector moodFXDirector;  // <<— updated type
 
     // Runtime indices
     int actIndex = 0;
@@ -26,37 +29,22 @@ public class StoryGameManager : MonoBehaviour
     enum StoryState { Idle, Dialogue, Exploration }
     StoryState state = StoryState.Idle;
 
-    void Start()
-    {
-        // Start automatically, or call StartStory() from elsewhere.
-        StartStory();
-    }
+    void Start() => StartStory();
 
     void Update()
     {
-        // Optional desktop debug advance
-        if (Input.GetKeyDown(debugAdvanceKey))
-            Advance();
+        if (Input.GetKeyDown(debugAdvanceKey)) Advance();
 
-        // If we auto-advance based on voice ending
         if (state == StoryState.Dialogue && autoAdvanceOnVoiceEnd && voiceSource != null && !voiceSource.isPlaying)
         {
-            // Ensure we only advance once per line (basic guard)
             if (dialogueUI != null && dialogueUI.ReadyForAutoAdvance())
-            {
                 Advance();
-            }
         }
     }
 
-    // ========== Public API ==========
-
     public void StartStory()
     {
-        actIndex = 0;
-        chapterIndex = 0;
-        lineIndex = -1;
-        state = StoryState.Idle;
+        actIndex = 0; chapterIndex = 0; lineIndex = -1; state = StoryState.Idle;
 
         if (acts.Count == 0)
         {
@@ -68,29 +56,23 @@ public class StoryGameManager : MonoBehaviour
 
     public void Advance()
     {
-        if (state == StoryState.Dialogue)
-        {
-            NextLine();
-        }
+        if (state == StoryState.Dialogue) NextLine();
         else if (state == StoryState.Exploration)
-        {
-            // In exploration we don’t auto-advance; completion should be signaled via CompleteObjectiveForCurrentChapter()
             Debug.Log("Exploration active. Call CompleteObjectiveForCurrentChapter() from your interactable.");
-        }
     }
 
-    /// <summary>
-    /// Call this from an interactable, trigger, or script to finish the current exploration chapter.
-    /// </summary>
     public void CompleteObjectiveForCurrentChapter()
     {
         if (state != StoryState.Exploration) return;
 
-        CurrentChapter()?.onChapterEnd?.Invoke();
+        var ch = CurrentChapter();
+
+        if (moodFXDirector && ch != null && ch.onComplete.apply)
+            moodFXDirector.CrossfadeTo(ch.onComplete.moodId, ch.onComplete.fadeSeconds);
+
+        ch?.onChapterEnd?.Invoke();
         GoToNextChapter();
     }
-
-    // ========== Internals ==========
 
     void StartAct(int index)
     {
@@ -101,8 +83,7 @@ public class StoryGameManager : MonoBehaviour
             dialogueUI?.Hide();
             return;
         }
-        chapterIndex = 0;
-        lineIndex = -1;
+        chapterIndex = 0; lineIndex = -1;
         Debug.Log($"Starting Act: {acts[index].actName}");
         StartChapter(chapterIndex);
     }
@@ -110,32 +91,25 @@ public class StoryGameManager : MonoBehaviour
     void StartChapter(int index)
     {
         var ch = CurrentChapter();
-        if (ch == null)
-        {
-            // no chapters in act — go to next act
-            GoToNextAct();
-            return;
-        }
+        if (ch == null) { GoToNextAct(); return; }
 
-        // Invoke start event for the chapter we are entering
+        if (moodFXDirector && ch.onEnter.apply)
+            moodFXDirector.CrossfadeTo(ch.onEnter.moodId, ch.onEnter.fadeSeconds);
+
         ch.onChapterStart?.Invoke();
 
-        // If chapter has dialogue, enter Dialogue state; else jump straight to exploration or end
         if (ch.dialogue != null && ch.dialogue.Count > 0)
         {
-            state = StoryState.Dialogue;
-            lineIndex = -1;
-            NextLine(); // show first line
+            state = StoryState.Dialogue; lineIndex = -1; NextLine();
         }
         else
         {
-            // No dialogue → either exploration or end immediately
-            if (ch.requiresExploration)
-            {
-                EnterExploration(ch);
-            }
+            if (ch.requiresExploration) EnterExploration(ch);
             else
             {
+                if (moodFXDirector && ch.onComplete.apply)
+                    moodFXDirector.CrossfadeTo(ch.onComplete.moodId, ch.onComplete.fadeSeconds);
+
                 ch.onChapterEnd?.Invoke();
                 GoToNextChapter();
             }
@@ -144,47 +118,41 @@ public class StoryGameManager : MonoBehaviour
 
     void NextLine()
     {
-        var ch = CurrentChapter();
-        if (ch == null) return;
+        var ch = CurrentChapter(); if (ch == null) return;
 
         lineIndex++;
         if (lineIndex >= ch.dialogue.Count)
         {
-            // Dialogue finished
             dialogueUI?.Hide();
+            if (voiceSource != null && voiceSource.isPlaying) voiceSource.Stop();
 
-            if (voiceSource != null && voiceSource.isPlaying)
-                voiceSource.Stop();
+            if (moodFXDirector && ch.afterDialogue.apply)
+                moodFXDirector.CrossfadeTo(ch.afterDialogue.moodId, ch.afterDialogue.fadeSeconds);
 
-            if (ch.requiresExploration)
-            {
-                EnterExploration(ch);
-            }
+            if (ch.requiresExploration) EnterExploration(ch);
             else
             {
+                if (moodFXDirector && ch.onComplete.apply)
+                    moodFXDirector.CrossfadeTo(ch.onComplete.moodId, ch.onComplete.fadeSeconds);
+
                 ch.onChapterEnd?.Invoke();
                 GoToNextChapter();
             }
             return;
         }
 
-        // Show current line
         var line = ch.dialogue[lineIndex];
         dialogueUI?.ShowLine(line.speaker, line.text);
 
-        // Play voice if present
         if (voiceSource != null)
         {
             if (line.voice != null)
             {
                 voiceSource.clip = line.voice;
                 voiceSource.Play();
-                dialogueUI?.MarkAutoAdvanceWindow(); // allow auto-advance when clip ends
+                dialogueUI?.MarkAutoAdvanceWindow();
             }
-            else
-            {
-                voiceSource.Stop();
-            }
+            else voiceSource.Stop();
         }
     }
 
@@ -192,7 +160,10 @@ public class StoryGameManager : MonoBehaviour
     {
         state = StoryState.Exploration;
         Debug.Log($"Exploration started for Chapter: {ch.chapterName}. Wait for objective completion.");
-        // Optionally show a small exploration hint in UI
+
+        if (moodFXDirector && ch.onExplorationStart.apply)
+            moodFXDirector.CrossfadeTo(ch.onExplorationStart.moodId, ch.onExplorationStart.fadeSeconds);
+
         if (!string.IsNullOrWhiteSpace(ch.explorationHint))
             dialogueUI?.ShowHint(ch.explorationHint);
     }
@@ -201,70 +172,46 @@ public class StoryGameManager : MonoBehaviour
     {
         chapterIndex++;
         var act = CurrentAct();
-        if (act != null && chapterIndex < act.chapters.Count)
-        {
-            StartChapter(chapterIndex);
-        }
-        else
-        {
-            // Move to next act
-            GoToNextAct();
-        }
+        if (act != null && chapterIndex < act.chapters.Count) StartChapter(chapterIndex);
+        else GoToNextAct();
     }
 
     void GoToNextAct()
     {
         actIndex++;
-        if (actIndex < acts.Count)
-        {
-            StartAct(actIndex);
-        }
-        else
-        {
-            // Story end
-            Debug.Log("All acts finished.");
-            state = StoryState.Idle;
-            dialogueUI?.Hide();
-        }
+        if (actIndex < acts.Count) StartAct(actIndex);
+        else { Debug.Log("All acts finished."); state = StoryState.Idle; dialogueUI?.Hide(); }
     }
 
-    Act CurrentAct()
-    {
-        if (actIndex < 0 || actIndex >= acts.Count) return null;
-        return acts[actIndex];
-    }
+    Act CurrentAct() => (actIndex < 0 || actIndex >= acts.Count) ? null : acts[actIndex];
 
     Chapter CurrentChapter()
     {
-        var act = CurrentAct();
-        if (act == null) return null;
-        if (chapterIndex < 0 || chapterIndex >= act.chapters.Count) return null;
-        return act.chapters[chapterIndex];
+        var act = CurrentAct(); if (act == null) return null;
+        return (chapterIndex < 0 || chapterIndex >= act.chapters.Count) ? null : act.chapters[chapterIndex];
     }
 }
 
 [Serializable]
-public class Act
-{
-    public string actName = "Act 1";
-    public List<Chapter> chapters = new();
-}
+public class Act { public string actName = "Act 1"; public List<Chapter> chapters = new(); }
+
+[Serializable]
+public class MoodCue { public bool apply = false; public string moodId = "Calm";[Range(0.1f, 5f)] public float fadeSeconds = 1.2f; }
 
 [Serializable]
 public class Chapter
 {
     public string chapterName = "Chapter 1";
-
-    [Tooltip("Lines shown before exploration (if any).")]
     public List<DialogueLine> dialogue = new();
-
-    [Tooltip("If true, chapter waits for an objective completion signal after dialogue.")]
     public bool requiresExploration = false;
-
-    [Tooltip("Optional hint to show during exploration (world-space UI).")]
     [TextArea(2, 5)] public string explorationHint;
 
-    [Tooltip("Events fired when chapter starts/ends.")]
+    [Header("Mood Cues")]
+    public MoodCue onEnter = new();
+    public MoodCue afterDialogue = new();
+    public MoodCue onExplorationStart = new();
+    public MoodCue onComplete = new();
+
     public UnityEvent onChapterStart;
     public UnityEvent onChapterEnd;
 }
@@ -274,5 +221,5 @@ public class DialogueLine
 {
     public string speaker;
     [TextArea(2, 5)] public string text;
-    public AudioClip voice; // optional
+    public AudioClip voice;
 }

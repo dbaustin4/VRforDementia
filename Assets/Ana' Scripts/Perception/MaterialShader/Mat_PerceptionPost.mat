@@ -101,10 +101,10 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Contrast: 0.18430787
+    - _Contrast: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Desaturation: -0.06933084
+    - _Desaturation: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -124,7 +124,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _VignetteStrength: 0.9357147
+    - _VignetteStrength: 0.1187439
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
