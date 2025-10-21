@@ -580,7 +580,7 @@ MonoBehaviour:
   voiceSource: {fileID: 0}
   autoAdvanceOnVoiceEnd: 1
   debugAdvanceKey: 32
-  moodFXDirector: {fileID: 0}
+  moodFXDirector: {fileID: 1048967522}
 --- !u!4 &538574492
 Transform:
   m_ObjectHideFlags: 0
@@ -716,55 +716,6 @@ RectTransform:
   m_AnchoredPosition: {x: 437.8, y: 203.4}
   m_SizeDelta: {x: 875.6, y: 406.8}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &819487042
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 819487044}
-  - component: {fileID: 819487043}
-  m_Layer: 0
-  m_Name: Volume_Happy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &819487043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 819487042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  priority: 10
-  blendDistance: 0
-  weight: 0
-  sharedProfile: {fileID: 11400000, guid: ffd066adebb23764bb06e217ac395ab2, type: 2}
---- !u!4 &819487044
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 819487042}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.76558, y: -10.000095, z: 15.634411}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &857740339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1102,6 +1053,77 @@ RectTransform:
   m_AnchoredPosition: {x: 437.8, y: 203.4}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1048967521
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1048967523}
+  - component: {fileID: 1048967522}
+  m_Layer: 0
+  m_Name: MoodFXDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1048967522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048967521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainLight: {fileID: 0}
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  moods: []
+  initialMood: Calm
+--- !u!4 &1048967523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048967521}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.76558, y: -10.000095, z: 15.634411}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149123642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,7 +1178,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   moods:
   - id: Happy
-    volume: {fileID: 819487043}
+    volume: {fileID: 0}
     lightColor:
       r: 0
       g: 0
@@ -1502,7 +1524,6 @@ GameObject:
   - component: {fileID: 1778951044}
   - component: {fileID: 1778951045}
   - component: {fileID: 1778951046}
-  - component: {fileID: 1778951047}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -1771,56 +1792,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1778951047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1778951040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainLight: {fileID: 18222668}
-  fadeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  moods:
-  - id: Happy
-    lightColor: {r: 0, g: 0, b: 0, a: 0}
-    lightIntensity: 0
-    lightTemperature: 0
-    materialParams:
-    - material: {fileID: 2100000, guid: 1551fb2dd9e210d4e80a37948392fb18, type: 2}
-      propertyName: _Tint
-      type: 0
-      floatValue: 0.3
-      colorValue: {r: 1, g: 0.72563314, b: 0.54905653, a: 0}
-    defaultFadeSeconds: 0.09
-  initialMood: Calm
 --- !u!1 &1812335793
 GameObject:
   m_ObjectHideFlags: 0
@@ -2144,10 +2115,10 @@ SceneRoots:
   - {fileID: 808901704}
   - {fileID: 1605637124}
   - {fileID: 538574492}
+  - {fileID: 1048967523}
   - {fileID: 1028767993}
   - {fileID: 32666039}
   - {fileID: 1778951042}
   - {fileID: 1240304448}
   - {fileID: 1812335797}
   - {fileID: 1149123645}
-  - {fileID: 819487044}
