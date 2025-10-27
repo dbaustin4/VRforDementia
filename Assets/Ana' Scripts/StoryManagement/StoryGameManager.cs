@@ -19,7 +19,7 @@ public class StoryGameManager : MonoBehaviour
     public KeyCode debugAdvanceKey = KeyCode.Space;
 
     [Header("Mood / Lighting")]
-    public MoodFXDirector moodFXDirector;  // <<— updated type
+    public MoodFXDirector moodFXDirector;   // assign in Inspector
 
     // Runtime indices
     int actIndex = 0;
@@ -42,6 +42,7 @@ public class StoryGameManager : MonoBehaviour
         }
     }
 
+    // ----- Public control -----
     public void StartStory()
     {
         actIndex = 0; chapterIndex = 0; lineIndex = -1; state = StoryState.Idle;
@@ -74,6 +75,7 @@ public class StoryGameManager : MonoBehaviour
         GoToNextChapter();
     }
 
+    // ----- Act / Chapter flow -----
     void StartAct(int index)
     {
         if (index < 0 || index >= acts.Count)
@@ -93,6 +95,7 @@ public class StoryGameManager : MonoBehaviour
         var ch = CurrentChapter();
         if (ch == null) { GoToNextAct(); return; }
 
+        // Mood when entering chapter
         if (moodFXDirector && ch.onEnter.apply)
             moodFXDirector.CrossfadeTo(ch.onEnter.moodId, ch.onEnter.fadeSeconds);
 
@@ -126,6 +129,7 @@ public class StoryGameManager : MonoBehaviour
             dialogueUI?.Hide();
             if (voiceSource != null && voiceSource.isPlaying) voiceSource.Stop();
 
+            // Mood after dialogue block
             if (moodFXDirector && ch.afterDialogue.apply)
                 moodFXDirector.CrossfadeTo(ch.afterDialogue.moodId, ch.afterDialogue.fadeSeconds);
 
@@ -183,6 +187,7 @@ public class StoryGameManager : MonoBehaviour
         else { Debug.Log("All acts finished."); state = StoryState.Idle; dialogueUI?.Hide(); }
     }
 
+    // ----- Helpers -----
     Act CurrentAct() => (actIndex < 0 || actIndex >= acts.Count) ? null : acts[actIndex];
 
     Chapter CurrentChapter()
@@ -190,13 +195,29 @@ public class StoryGameManager : MonoBehaviour
         var act = CurrentAct(); if (act == null) return null;
         return (chapterIndex < 0 || chapterIndex >= act.chapters.Count) ? null : act.chapters[chapterIndex];
     }
+
+    // Optional: public helper to trigger moods from UI/Timeline/Ink tags
+    public void ApplyMood(MoodFXDirector.MoodId mood, float fadeSeconds = 1.0f)
+    {
+        if (moodFXDirector) moodFXDirector.CrossfadeTo(mood, fadeSeconds);
+    }
+}
+
+// ----- Data containers -----
+[Serializable]
+public class Act
+{
+    public string actName = "Act 1";
+    public List<Chapter> chapters = new();
 }
 
 [Serializable]
-public class Act { public string actName = "Act 1"; public List<Chapter> chapters = new(); }
-
-[Serializable]
-public class MoodCue { public bool apply = false; public string moodId = "Calm";[Range(0.1f, 5f)] public float fadeSeconds = 1.2f; }
+public class MoodCue
+{
+    public bool apply = false;
+    public MoodFXDirector.MoodId moodId = MoodFXDirector.MoodId.Happiness; // enum dropdown
+    [Range(0.1f, 5f)] public float fadeSeconds = 1.2f;
+}
 
 [Serializable]
 public class Chapter
