@@ -152,8 +152,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.8
+  m_Color: {r: 1, g: 0.58679235, b: 0.58679235, a: 0}
+  m_Intensity: 0.57
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -196,7 +196,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 5918
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1082,7 +1082,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLight: {fileID: 0}
+  mainLight: {fileID: 18222668}
+  globalVolume: {fileID: 0}
   fadeCurve:
     serializedVersion: 2
     m_Curve:
@@ -1107,8 +1108,52 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  moods: []
-  initialMood: Calm
+  moods:
+  - id: 0
+    lightColor: {r: 1, g: 0.58679235, b: 0.58679235, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 5918
+    materialParams:
+    - material: {fileID: 0}
+      propertyName: 
+      type: 0
+      floatValue: 0
+      colorValue: {r: 0, g: 0, b: 0, a: 0}
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 1
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  initialMood: 0
+  toggleHappiness: 0
+  toggleSadness: 0
+  toggleNostalgic: 0
+  toggleFurious: 0
+  toggleTriggered: 0
+  togglePity: 0
+  toggleJoyful: 0
 --- !u!4 &1048967523
 Transform:
   m_ObjectHideFlags: 0
@@ -1154,51 +1199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022c065a298fb3c46ac9a7e8a7eccc57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLight: {fileID: 0}
-  fadeCurve:
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  moods:
-  - id: Happy
-    volume: {fileID: 0}
-    lightColor:
-      r: 0
-      g: 0
-      b: 0
-      a: 0
-    lightIntensity: 0
-    lightTemperature: 0
-    defaultFadeSeconds: 0
-  initialMood: Calm
-  _current:
-    id: Calm
-    volume: {fileID: 0}
-    lightColor:
-      r: 1
-      g: 1
-      b: 1
-      a: 1
-    lightIntensity: 1
-    lightTemperature: 6500
-    defaultFadeSeconds: 1.2
 --- !u!114 &1149123644
 MonoBehaviour:
   m_ObjectHideFlags: 0
