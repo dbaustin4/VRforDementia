@@ -23,6 +23,12 @@ public class VRPathMover : MonoBehaviour
     private float elapsedTime = 0f;
     private bool moving = false;
 
+    private Quaternion initialRotation;
+
+    private void Start()
+    {
+        initialRotation = dollyCart.transform.rotation;
+    }
     public void StartMovement()
     {
         if (playerLocomotion != null)
@@ -44,6 +50,7 @@ public class VRPathMover : MonoBehaviour
         t = easeCurve.Evaluate(t);
 
         dollyCart.m_Position = t * dollyCart.m_Path.PathLength;
+        dollyCart.transform.rotation = initialRotation;
 
         // Optional small head sway to feel more human
         if (ovrRig != null)
