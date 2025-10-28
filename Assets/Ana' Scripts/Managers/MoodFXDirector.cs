@@ -50,25 +50,17 @@ public class MoodFXDirector : MonoBehaviour
         public bool usePostFX = false;
 
         [Header("Color Adjustments")]
-        [Tooltip("Exposure offset in EV.")]
         public float postExposure = 0f;
-        [Tooltip("Saturation shift (-100..100).")]
         [Range(-100f, 100f)] public float saturation = 0f;
-        [Tooltip("Contrast (-100..100).")]
         [Range(-100f, 100f)] public float contrast = 0f;
-        [Tooltip("Optional color filter/tint.")]
         public Color colorFilter = Color.white;
 
         [Header("Bloom")]
-        [Tooltip("Bloom intensity (~0..10).")]
         [Min(0f)] public float bloomIntensity = 0f;
-        [Tooltip("Bloom threshold (lower = more glow).")]
         [Min(0f)] public float bloomThreshold = 1f;
 
         [Header("Vignette")]
-        [Tooltip("Vignette darkness (0..1).")]
         [Range(0f, 1f)] public float vignetteIntensity = 0f;
-        [Tooltip("Vignette smoothness (0..1).")]
         [Range(0f, 1f)] public float vignetteSmoothness = 0.2f;
     }
 
@@ -96,7 +88,7 @@ public class MoodFXDirector : MonoBehaviour
     // -------- Inspector --------
     [Header("Scene References")]
     [Tooltip("Your single realtime Directional Light.")]
-    public Light mainLight; // single realtime Directional
+    public Light mainLight;
 
     [Tooltip("Global Volume used for URP post-processing. Optional.")]
     public Volume globalVolume;
@@ -226,143 +218,6 @@ public class MoodFXDirector : MonoBehaviour
             case "joyful": return MoodId.Joyful;
             default: return MoodId.Happiness;
         }
-    }
-
-    // -------- Two-mood blending API --------
-    /// <summary>
-    /// Blend two moods (A + w*B) and crossfade from current → composite in 'seconds'.
-    /// After the fade, the logical current mood remains A.
-    /// </summary>
-    public void CrossfadeBlend(MoodId baseId, MoodId overlayId, float overlayWeight, float seconds = -1f)
-    {
-        var A = FindMood(baseId);
-        var B = FindMood(overlayId);
-        if (A == null || B == null) return;
-
-        float w = Mathf.Clamp01(overlayWeight);
-        var composite = Compose(A, B, w);
-
-        float dur = (seconds > 0f) ? seconds : Mathf.Max(0.05f, composite.defaultFadeSeconds);
-        if (_fadeCo != null) StopCoroutine(_fadeCo);
-        _fadeCo = StartCoroutine(FadeRoutine(_current, composite, dur));
-
-        // After fade we keep the logical state anchored to A
-        _current = A;
-    }
-
-    // String overload
-    public void CrossfadeBlend(string baseId, string overlayId, float overlayWeight, float seconds = -1f)
-        => CrossfadeBlend(ParseMoodId(baseId), ParseMoodId(overlayId), overlayWeight, seconds);
-
-    /// <summary>
-    /// Create a runtime composite mood by blending A with B at weight w.
-    /// Light + PostFX are lerped. Material params are merged:
-    ///   - If a param (by material+property) exists in both: lerp its value/color.
-    ///   - Else: copy from whichever mood defines it.
-    /// </summary>
-    Mood Compose(Mood A, Mood B, float w)
-    {
-        var M = new Mood
-        {
-            id = A.id, // keep logical anchor
-            defaultFadeSeconds = Mathf.Lerp(A.defaultFadeSeconds, B.defaultFadeSeconds, w),
-
-            // Light
-            lightColor = Color.Lerp(A.lightColor, B.lightColor, w),
-            lightIntensity = Mathf.Lerp(A.lightIntensity, B.lightIntensity, w),
-            lightTemperature = Mathf.Lerp(A.lightTemperature, B.lightTemperature, w),
-
-            // PostFX
-            postFX = new PostFXParams
-            {
-                // enable if either uses postfx; we'll lerp values below
-                usePostFX = (A.postFX != null && A.postFX.usePostFX) ||
-                            (B.postFX != null && B.postFX.usePostFX),
-
-                postExposure = Mathf.Lerp(A.postFX?.postExposure ?? 0f, B.postFX?.postExposure ?? 0f, w),
-                saturation = Mathf.Lerp(A.postFX?.saturation ?? 0f, B.postFX?.saturation ?? 0f, w),
-                contrast = Mathf.Lerp(A.postFX?.contrast ?? 0f, B.postFX?.contrast ?? 0f, w),
-                colorFilter = Color.Lerp(A.postFX?.colorFilter ?? Color.white, B.postFX?.colorFilter ?? Color.white, w),
-                bloomIntensity = Mathf.Lerp(A.postFX?.bloomIntensity ?? 0f, B.postFX?.bloomIntensity ?? 0f, w),
-                bloomThreshold = Mathf.Lerp(A.postFX?.bloomThreshold ?? 1f, B.postFX?.bloomThreshold ?? 1f, w),
-                vignetteIntensity = Mathf.Lerp(A.postFX?.vignetteIntensity ?? 0f, B.postFX?.vignetteIntensity ?? 0f, w),
-                vignetteSmoothness = Mathf.Lerp(A.postFX?.vignetteSmoothness ?? 0.2f, B.postFX?.vignetteSmoothness ?? 0.2f, w)
-            },
-
-            // Materials: merged below
-            materialParams = ComposeMaterialParams(A.materialParams, B.materialParams, w)
-        };
-
-        return M;
-    }
-
-    MaterialParam[] ComposeMaterialParams(MaterialParam[] a, MaterialParam[] b, float w)
-    {
-        // Build dictionary keyed by (material instance, property id)
-        var dict = new Dictionary<(Material mat, int prop), MaterialParam>(64);
-
-        // Helper to clone param with certain target values
-        MaterialParam Clone(MaterialParam src) => new MaterialParam
-        {
-            material = src.material,
-            propertyName = src.propertyName,
-            type = src.type,
-            floatValue = src.floatValue,
-            colorValue = src.colorValue,
-            propId = src.propId
-        };
-
-        // Add all from A
-        if (a != null)
-        {
-            foreach (var p in a)
-            {
-                if (p == null || p.material == null) continue;
-                if (p.propId == -1 && !string.IsNullOrEmpty(p.propertyName)) p.propId = Shader.PropertyToID(p.propertyName);
-                if (p.propId == -1) continue;
-                dict[(p.material, p.propId)] = Clone(p);
-            }
-        }
-
-        // Merge with B (lerp when same key)
-        if (b != null)
-        {
-            foreach (var p in b)
-            {
-                if (p == null || p.material == null) continue;
-                if (p.propId == -1 && !string.IsNullOrEmpty(p.propertyName)) p.propId = Shader.PropertyToID(p.propertyName);
-                if (p.propId == -1) continue;
-
-                var key = (p.material, p.propId);
-                if (dict.TryGetValue(key, out var existing))
-                {
-                    if (p.type == ParamType.Float && existing.type == ParamType.Float)
-                        existing.floatValue = Mathf.Lerp(existing.floatValue, p.floatValue, w);
-                    else if (p.type == ParamType.Color && existing.type == ParamType.Color)
-                        existing.colorValue = Color.Lerp(existing.colorValue, p.colorValue, w);
-                    else
-                    {
-                        // Type mismatch: prefer A’s type but keep A’s value (or switch to B’s type—design choice)
-                        // Here we keep existing (A).
-                    }
-                    dict[key] = existing;
-                }
-                else
-                {
-                    // Only B has it → take a weighted version (from neutral towards B)
-                    var clone = Clone(p);
-                    if (clone.type == ParamType.Float)
-                        clone.floatValue = Mathf.Lerp(0f, clone.floatValue, w);
-                    else
-                        clone.colorValue = Color.Lerp(Color.black, clone.colorValue, w);
-                    dict[key] = clone;
-                }
-            }
-        }
-
-        // Convert back to array
-        var list = new List<MaterialParam>(dict.Values);
-        return list.ToArray();
     }
 
     // -------- Internals --------

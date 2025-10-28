@@ -152,7 +152,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.58679235, b: 0.58679235, a: 0}
+  m_Color: {r: 0.92382073, g: 0.6031659, b: 0.6384433, a: 0}
   m_Intensity: 0.57
   m_Range: 10
   m_SpotAngle: 30
@@ -196,7 +196,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 5918
+  m_ColorTemperature: 5178.25
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -526,19 +526,19 @@ MonoBehaviour:
       explorationHint: 
       onEnter:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       afterDialogue:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onExplorationStart:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onComplete:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onChapterStart:
         m_PersistentCalls:
@@ -552,19 +552,19 @@ MonoBehaviour:
       explorationHint: 
       onEnter:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       afterDialogue:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onExplorationStart:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onComplete:
         apply: 0
-        moodId: Calm
+        moodId: 0
         fadeSeconds: 1.2
       onChapterStart:
         m_PersistentCalls:
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainLight: {fileID: 18222668}
-  globalVolume: {fileID: 0}
+  globalVolume: {fileID: 1149123644}
   fadeCurve:
     serializedVersion: 2
     m_Curve:
@@ -1131,6 +1131,86 @@ MonoBehaviour:
       vignetteSmoothness: 0
     defaultFadeSeconds: 0
   - id: 1
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 2
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 3
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 4
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 5
+    lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
+    lightIntensity: 0.57
+    lightTemperature: 0
+    materialParams: []
+    postFX:
+      usePostFX: 0
+      postExposure: 0
+      saturation: 0
+      contrast: 0
+      colorFilter: {r: 0, g: 0, b: 0, a: 0}
+      bloomIntensity: 0
+      bloomThreshold: 0
+      vignetteIntensity: 0
+      vignetteSmoothness: 0
+    defaultFadeSeconds: 0
+  - id: 6
     lightColor: {r: 0.390566, g: 0.717781, b: 1, a: 0}
     lightIntensity: 0.57
     lightTemperature: 0
