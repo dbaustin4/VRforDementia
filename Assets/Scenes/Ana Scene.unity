@@ -524,22 +524,54 @@ MonoBehaviour:
       dialogue: []
       requiresExploration: 0
       explorationHint: 
-      onEnter:
+      onEnterCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      afterDialogue:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers:
+          - label: 
+            overlayMood: 0
+            durationSeconds: 0
+            weightCurve:
+              serializedVersion: 2
+              m_Curve: []
+              m_PreInfinity: 0
+              m_PostInfinity: 0
+              m_RotationOrder: 0
+            microFadeSeconds: 0
+            stepSeconds: 0
+            endReturnFadeSeconds: 0
+      afterDialogueCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      onExplorationStart:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onExplorationStartCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      onComplete:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onCompleteCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
       onChapterStart:
         m_PersistentCalls:
           m_Calls: []
@@ -550,22 +582,42 @@ MonoBehaviour:
       dialogue: []
       requiresExploration: 0
       explorationHint: 
-      onEnter:
+      onEnterCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      afterDialogue:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      afterDialogueCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      onExplorationStart:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onExplorationStartCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
-      onComplete:
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onCompleteCue:
         apply: 0
-        moodId: 0
-        fadeSeconds: 1.2
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
       onChapterStart:
         m_PersistentCalls:
           m_Calls: []
