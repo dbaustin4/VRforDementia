@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &516065167828413976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5096000435017077443}
+  - component: {fileID: 1476233318831432536}
+  m_Layer: 0
+  m_Name: StoryGameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5096000435017077443
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516065167828413976}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.011308, y: 5.44406, z: -1.2647072}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1476233318831432536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516065167828413976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf011f35d9eb39c4f8daf994d8903193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acts:
+  - actName: 
+    chapters:
+    - chapterName: 
+      dialogue: []
+      requiresExploration: 0
+      explorationHint: 
+      onEnterCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 1
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers:
+          - label: 
+            overlayMood: 0
+            durationSeconds: 0
+            weightCurve:
+              serializedVersion: 2
+              m_Curve: []
+              m_PreInfinity: 0
+              m_PostInfinity: 0
+              m_RotationOrder: 0
+            microFadeSeconds: 0
+            stepSeconds: 0
+            endReturnFadeSeconds: 0
+      afterDialogueCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onExplorationStartCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onCompleteCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onChapterStart:
+        m_PersistentCalls:
+          m_Calls: []
+      onChapterEnd:
+        m_PersistentCalls:
+          m_Calls: []
+    - chapterName: 
+      dialogue: []
+      requiresExploration: 0
+      explorationHint: 
+      onEnterCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      afterDialogueCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onExplorationStartCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onCompleteCue:
+        apply: 0
+        baseMood:
+          enabled: 1
+          mood: 0
+          fadeSeconds: 1.2
+        overlays:
+          enabled: 0
+          layers: []
+      onChapterStart:
+        m_PersistentCalls:
+          m_Calls: []
+      onChapterEnd:
+        m_PersistentCalls:
+          m_Calls: []
+  - actName: 
+    chapters: []
+  - actName: 
+    chapters: []
+  dialogueUI: {fileID: 0}
+  voiceSource: {fileID: 0}
+  autoAdvanceOnVoiceEnd: 1
+  debugAdvanceKey: 32
+  moodFXDirector: {fileID: 0}
