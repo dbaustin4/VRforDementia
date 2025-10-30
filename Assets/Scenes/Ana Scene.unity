@@ -488,166 +488,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   translationSmooth: 0.02
   rotationSmooth: 0.03
---- !u!1 &538574490
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 538574492}
-  - component: {fileID: 538574491}
-  m_Layer: 0
-  m_Name: StoryGameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &538574491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538574490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf011f35d9eb39c4f8daf994d8903193, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acts:
-  - actName: 
-    chapters:
-    - chapterName: 
-      dialogue: []
-      requiresExploration: 0
-      explorationHint: 
-      onEnterCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 1
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers:
-          - label: 
-            overlayMood: 0
-            durationSeconds: 0
-            weightCurve:
-              serializedVersion: 2
-              m_Curve: []
-              m_PreInfinity: 0
-              m_PostInfinity: 0
-              m_RotationOrder: 0
-            microFadeSeconds: 0
-            stepSeconds: 0
-            endReturnFadeSeconds: 0
-      afterDialogueCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onExplorationStartCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onCompleteCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onChapterStart:
-        m_PersistentCalls:
-          m_Calls: []
-      onChapterEnd:
-        m_PersistentCalls:
-          m_Calls: []
-    - chapterName: 
-      dialogue: []
-      requiresExploration: 0
-      explorationHint: 
-      onEnterCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      afterDialogueCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onExplorationStartCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onCompleteCue:
-        apply: 0
-        baseMood:
-          enabled: 1
-          mood: 0
-          fadeSeconds: 1.2
-        overlays:
-          enabled: 0
-          layers: []
-      onChapterStart:
-        m_PersistentCalls:
-          m_Calls: []
-      onChapterEnd:
-        m_PersistentCalls:
-          m_Calls: []
-  - actName: 
-    chapters: []
-  - actName: 
-    chapters: []
-  dialogueUI: {fileID: 808901700}
-  voiceSource: {fileID: 0}
-  autoAdvanceOnVoiceEnd: 1
-  debugAdvanceKey: 32
-  moodFXDirector: {fileID: 1048967522}
---- !u!4 &538574492
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538574490}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.011308, y: 5.44406, z: -1.2647072}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &808901699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,579 +945,30 @@ RectTransform:
   m_AnchoredPosition: {x: 437.8, y: 203.4}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1048967521
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1048967523}
-  - component: {fileID: 1048967522}
-  m_Layer: 0
-  m_Name: MoodFXDirector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1048967522
+--- !u!114 &1048967522 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+    type: 3}
+  m_PrefabInstance: {fileID: 5565042202565290187}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1048967521}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainLight: {fileID: 18222668}
-  globalVolume: {fileID: 1149123644}
-  fadeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  moods:
-  - id: 0
-    lightColor: {r: 1, g: 0.95, b: 0.85, a: 1}
-    lightIntensity: 1.1
-    lightTemperature: 6800
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 1, g: 0.8509804, b: 0.9019608, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.35
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: 0.2
-      saturation: 12
-      contrast: 6
-      colorFilter: {r: 1, g: 0.8509804, b: 0.9019608, a: 1}
-      bloomIntensity: 0.55
-      bloomThreshold: 1.05
-      vignetteIntensity: 0.1
-      vignetteSmoothness: 0.22
-    defaultFadeSeconds: 1
-  - id: 1
-    lightColor: {r: 0.75, g: 0.85, b: 1, a: 1}
-    lightIntensity: 0.7
-    lightTemperature: 6500
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 0.54509807, g: 0.7058824, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.45
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0.25
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0.02
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0.03
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: -0.1
-      saturation: -18
-      contrast: -4
-      colorFilter: {r: 0.54509807, g: 0.7058824, b: 1, a: 1}
-      bloomIntensity: 0.2
-      bloomThreshold: 1.2
-      vignetteIntensity: 0.3
-      vignetteSmoothness: 0.48
-    defaultFadeSeconds: 1.2
-  - id: 2
-    lightColor: {r: 1, g: 0.9, b: 0.75, a: 1}
-    lightIntensity: 0.9
-    lightTemperature: 5200
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 0.84705883, g: 0.7490196, b: 0.63529414, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.5
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0.15
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: e43df7392e843f845be7eccf9c42db50, type: 2}
-      propertyName: _Dither
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: e43df7392e843f845be7eccf9c42db50, type: 2}
-      propertyName: _FilmFlicker
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0.06
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0.08
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: 0.05
-      saturation: -10
-      contrast: 5
-      colorFilter: {r: 0.84705883, g: 0.7490196, b: 0.63529414, a: 1}
-      bloomIntensity: 0.35
-      bloomThreshold: 1.1
-      vignetteIntensity: 0.2
-      vignetteSmoothness: 0.38
-    defaultFadeSeconds: 1.4
-  - id: 3
-    lightColor: {r: 1, g: 0.55, b: 0.45, a: 1}
-    lightIntensity: 1.2
-    lightTemperature: 5000
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 1, g: 0.41568628, b: 0.41568628, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.55
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0.08
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0.2
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ScanlineJitter
-      type: 0
-      floatValue: 0.12
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0.06
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0.15
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: 0.25
-      saturation: 10
-      contrast: 14
-      colorFilter: {r: 1, g: 0.41568628, b: 0.41568628, a: 1}
-      bloomIntensity: 0.15
-      bloomThreshold: 1.3
-      vignetteIntensity: 0.4
-      vignetteSmoothness: 0.52
-    defaultFadeSeconds: 0.6
-  - id: 4
-    lightColor: {r: 0.9, g: 0.8, b: 1, a: 1}
-    lightIntensity: 0.95
-    lightTemperature: 7000
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 1, g: 0.61960787, b: 0.85882354, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.6
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0.05
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0.15
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0.25
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0.14
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0.12
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0.2
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: 0
-      saturation: -5
-      contrast: 10
-      colorFilter: {r: 1, g: 0.61960787, b: 0.85882354, a: 1}
-      bloomIntensity: 0
-      bloomThreshold: 1.4
-      vignetteIntensity: 0.5
-      vignetteSmoothness: 0.55
-    defaultFadeSeconds: 0.8
-  - id: 5
-    lightColor: {r: 0.88, g: 0.9, b: 1, a: 1}
-    lightIntensity: 0.8
-    lightTemperature: 6800
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 0.7921569, g: 0.74509805, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.4
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0.03
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0.06
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0.04
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: -0.05
-      saturation: -12
-      contrast: -2
-      colorFilter: {r: 0.7921569, g: 0.74509805, b: 1, a: 1}
-      bloomIntensity: 0.15
-      bloomThreshold: 1.25
-      vignetteIntensity: 0.22
-      vignetteSmoothness: 0.4
-    defaultFadeSeconds: 1.1
-  - id: 6
-    lightColor: {r: 1, g: 0.98, b: 0.9, a: 1}
-    lightIntensity: 1.15
-    lightTemperature: 7000
-    materialParams:
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintColor
-      type: 1
-      floatValue: 0
-      colorValue: {r: 1, g: 0.78039217, b: 0.85490197, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TintStrength
-      type: 0
-      floatValue: 0.38
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Desaturate
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _LensWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _ColorSplit
-      type: 0
-      floatValue: 0.03
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _Glitch
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _TimeWarp
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 0}
-      propertyName: _VignetteBoost
-      type: 0
-      floatValue: 0
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    - material: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-      propertyName: _BloomBoost
-      type: 0
-      floatValue: 0.1
-      colorValue: {r: 1, g: 1, b: 1, a: 1}
-    postFX:
-      usePostFX: 1
-      postExposure: 0.18
-      saturation: 16
-      contrast: 8
-      colorFilter: {r: 1, g: 0.78039217, b: 0.85490197, a: 1}
-      bloomIntensity: 0.5
-      bloomThreshold: 1.05
-      vignetteIntensity: 0.1
-      vignetteSmoothness: 0.22
-    defaultFadeSeconds: 0.9
-  initialMood: 0
-  toggleHappiness: 0
-  toggleSadness: 0
-  toggleNostalgic: 0
-  toggleFurious: 0
-  toggleTriggered: 0
-  togglePity: 0
-  toggleJoyful: 0
---- !u!4 &1048967523
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1048967521}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.76558, y: -10.000095, z: 15.634411}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1149123642
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1149123645}
-  - component: {fileID: 1149123644}
-  - component: {fileID: 1149123643}
-  m_Layer: 0
-  m_Name: Global Volume
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1149123643
+--- !u!114 &1149123644 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2297947873623896589, guid: b2b377b8b6a428e46986a27bf5922d67,
+    type: 3}
+  m_PrefabInstance: {fileID: 8232753991900933178}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1149123642}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 022c065a298fb3c46ac9a7e8a7eccc57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1149123644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1149123642}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: 1772b80c8d0a89a418907345be2a806d, type: 2}
---- !u!4 &1149123645
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1149123642}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.76558, y: -10.000095, z: 15.634411}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1240304444
 GameObject:
   m_ObjectHideFlags: 0
@@ -2551,6 +1842,230 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2012083892}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &184282056481155153
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 516065167828413976, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_Name
+      value: StoryGameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476233318831432536, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: dialogueUI
+      value: 
+      objectReference: {fileID: 808901700}
+    - target: {fileID: 1476233318831432536, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: moodFXDirector
+      value: 
+      objectReference: {fileID: 1048967522}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4.011308
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.44406
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.2647072
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5096000435017077443, guid: 0aa60c59a35e0d24a9b4794cad62b505,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0aa60c59a35e0d24a9b4794cad62b505, type: 3}
+--- !u!1001 &5565042202565290187
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.76558
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -10.000095
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 15.634411
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 750115963578253704, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: m_Name
+      value: MoodFXDirector
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: mainLight
+      value: 
+      objectReference: {fileID: 18222668}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: globalVolume
+      value: 
+      objectReference: {fileID: 1149123644}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a67bc6c3ac1e01248a2372b95b14a7ef, type: 3}
+--- !u!1001 &8232753991900933178
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 578037131176697389, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_Name
+      value: Global Volume
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.76558
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -10.000095
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 15.634411
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072072483036925327, guid: b2b377b8b6a428e46986a27bf5922d67,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b2b377b8b6a428e46986a27bf5922d67, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2561,11 +2076,11 @@ SceneRoots:
   - {fileID: 403645874}
   - {fileID: 808901704}
   - {fileID: 1605637124}
-  - {fileID: 538574492}
-  - {fileID: 1048967523}
+  - {fileID: 184282056481155153}
+  - {fileID: 5565042202565290187}
   - {fileID: 1028767993}
   - {fileID: 32666039}
   - {fileID: 1778951042}
   - {fileID: 1240304448}
   - {fileID: 1812335797}
-  - {fileID: 1149123645}
+  - {fileID: 8232753991900933178}

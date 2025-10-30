@@ -70,9 +70,16 @@ public class MoodFXDirector : MonoBehaviour
         [Tooltip("Mood identifier.")]
         public MoodId id = MoodId.Happiness;
 
-        [Header("Light (optional but cheap)")]
+        [Header("Light (relative to each lamp's baseline)")]
+        [Tooltip("0 = keep original lamp color; 1 = fully tint towards this color.")]
+        [Range(0, 1)] public float lightColorBlend = 0.75f;
         public Color lightColor = Color.white;
-        [Range(0.2f, 1.3f)] public float lightIntensity = 1.0f;
+
+        [Tooltip("Multiply each lamp's intensity by this factor (1 = keep original).")]
+        [Range(0.2f, 1.8f)] public float lightIntensityMul = 1.0f;
+
+        [Tooltip("Blend lamp color temperature towards this value (0 = keep, 1 = use this). Only affects lights using temperature.")]
+        [Range(0, 1)] public float lightTemperatureBlend = 0f;
         [Range(2500, 9000)] public float lightTemperature = 6500f;
 
         [Header("Shader parameters driven for this mood")]
@@ -86,10 +93,23 @@ public class MoodFXDirector : MonoBehaviour
     }
 
     // -------- Inspector --------
-    [Header("Scene References")]
-    [Tooltip("Your single realtime Directional Light.")]
-    public Light mainLight;
+    [Header("Lighting Control")]
+    [Tooltip("If true, we auto-collect all scene lights that are Realtime or Mixed and control them. If false, only the 'controlledLights' list is used.")]
+    public bool autoCollectLights = true;
 
+    [Tooltip("Optional manual list. If Auto Collect is ON, these are added on top (and de-duplicated).")]
+    public List<Light> controlledLights = new List<Light>();
+
+    [Tooltip("Affect these Unity Light types when auto-collecting.")]
+    public bool affectDirectional = true;
+    public bool affectPoint = true;
+    public bool affectSpot = true;
+    public bool affectArea = false; // (URP doesn't render built-in Area lights; keep off by default)
+
+    [Tooltip("Ignore baked-only lights. Recommended ON for environment kits with baked lighting.")]
+    public bool ignoreBakedLights = true;
+
+    [Header("Scene References")]
     [Tooltip("Global Volume used for URP post-processing. Optional.")]
     public Volume globalVolume;
 
@@ -113,6 +133,17 @@ public class MoodFXDirector : MonoBehaviour
     Mood _current;
     Coroutine _fadeCo;
 
+    // ----- Internal lighting state -----
+    class LightEntry
+    {
+        public Light light;
+        public Color baseColor;
+        public float baseIntensity;
+        public float baseTemperature;
+        public bool usesTemp;
+    }
+    readonly List<LightEntry> _lightEntries = new List<LightEntry>();
+
     // Cached post fx start values during fade
     struct PostFXStart
     {
@@ -125,13 +156,51 @@ public class MoodFXDirector : MonoBehaviour
 
     void Awake()
     {
-        if (!mainLight) mainLight = FindAnyObjectByType<Light>();
         CachePropIds();
+        RefreshLightEntries(); // <-- new
     }
 
     void Start()
     {
         SetImmediate(initialMood);
+    }
+
+    // -------- Utilities to collect lights --------
+    [ContextMenu("Refresh Light Entries (Auto Collect)")]
+    public void RefreshLightEntries()
+    {
+        _lightEntries.Clear();
+
+        HashSet<Light> set = new HashSet<Light>();
+        if (autoCollectLights)
+        {
+            var all = FindObjectsByType<Light>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var l in all)
+            {
+                if (!l) continue;
+                if (ignoreBakedLights && l.lightmapBakeType == LightmapBakeType.Baked) continue;
+                if ((!affectDirectional && l.type == LightType.Directional) ||
+                    (!affectPoint && l.type == LightType.Point) ||
+                    (!affectSpot && l.type == LightType.Spot) ||
+                    (!affectArea && l.type == LightType.Area))
+                    continue;
+                set.Add(l);
+            }
+        }
+        // include manual list
+        foreach (var l in controlledLights) if (l) set.Add(l);
+
+        foreach (var l in set)
+        {
+            _lightEntries.Add(new LightEntry
+            {
+                light = l,
+                baseColor = l.color,
+                baseIntensity = l.intensity,
+                baseTemperature = l.colorTemperature,
+                usesTemp = l.useColorTemperature
+            });
+        }
     }
 
     void CachePropIds()
@@ -172,7 +241,7 @@ public class MoodFXDirector : MonoBehaviour
         var m = FindMood(id);
         if (m == null) return;
 
-        ApplyLight(m);
+        ApplyLightImmediate(m);
         ApplyMaterialsImmediate(m);
         ApplyPostFXImmediate(m);
         _current = m;
@@ -223,10 +292,8 @@ public class MoodFXDirector : MonoBehaviour
     // -------- Internals --------
     IEnumerator FadeRoutine(Mood from, Mood to, float dur)
     {
-        // Light start
-        Color c0 = mainLight ? mainLight.color : Color.white;
-        float i0 = mainLight ? mainLight.intensity : 1f;
-        float t0 = mainLight ? mainLight.colorTemperature : 6500f;
+        // Lighting starts captured from baselines at Awake (per lamp)
+        // We'll lerp relative multipliers / blends here.
 
         // Material starts (read current from 'to' targets)
         var toList = to?.materialParams;
@@ -254,13 +321,8 @@ public class MoodFXDirector : MonoBehaviour
             t += Time.deltaTime;
             float k = fadeCurve.Evaluate(Mathf.Clamp01(t / dur));
 
-            // Light
-            if (mainLight)
-            {
-                mainLight.color = Color.Lerp(c0, to.lightColor, k);
-                mainLight.intensity = Mathf.Lerp(i0, to.lightIntensity, k);
-                mainLight.colorTemperature = Mathf.Lerp(t0, to.lightTemperature, k);
-            }
+            // Lights: apply relative to baseline for every lamp
+            ApplyLightLerped(to, k);
 
             // Materials
             for (int i = 0; i < count; i++)
@@ -287,17 +349,53 @@ public class MoodFXDirector : MonoBehaviour
         }
 
         // Snap to final
-        ApplyLight(to);
+        ApplyLightImmediate(to);
         ApplyMaterialsImmediate(to);
         ApplyPostFXImmediate(to);
     }
 
-    void ApplyLight(Mood m)
+    // ---------- Lighting application (multi-lamp, relative) ----------
+    void ApplyLightLerped(Mood target, float k)
     {
-        if (!mainLight) return;
-        mainLight.color = m.lightColor;
-        mainLight.intensity = m.lightIntensity;
-        mainLight.colorTemperature = m.lightTemperature;
+        if (_lightEntries.Count == 0 || target == null) return;
+
+        float cBlend = target.lightColorBlend * k; // ease color blend by k
+        float iMul = Mathf.Lerp(1f, target.lightIntensityMul, k);
+        float tBlend = target.lightTemperatureBlend * k;
+
+        foreach (var e in _lightEntries)
+        {
+            if (!e.light) continue;
+
+            // Intensity: base * multiplier
+            e.light.intensity = e.baseIntensity * iMul;
+
+            // Color: blend from base color towards target tint
+            var tinted = Color.Lerp(e.baseColor, target.lightColor, cBlend);
+            e.light.color = tinted;
+
+            // Temperature: blend if used
+            if (e.usesTemp && tBlend > 0f)
+                e.light.colorTemperature = Mathf.Lerp(e.baseTemperature, target.lightTemperature, tBlend);
+        }
+    }
+
+    void ApplyLightImmediate(Mood m)
+    {
+        if (_lightEntries.Count == 0 || m == null) return;
+
+        foreach (var e in _lightEntries)
+        {
+            if (!e.light) continue;
+
+            e.light.intensity = e.baseIntensity * m.lightIntensityMul;
+
+            var tinted = Color.Lerp(e.baseColor, m.lightColor, m.lightColorBlend);
+            e.light.color = tinted;
+
+            if (e.usesTemp && m.lightTemperatureBlend > 0f)
+                e.light.colorTemperature = Mathf.Lerp(e.baseTemperature, m.lightTemperature, m.lightTemperatureBlend);
+        }
     }
 
     void ApplyMaterialsImmediate(Mood m)
@@ -432,14 +530,12 @@ public class MoodFXDirector : MonoBehaviour
             propertyName = prop,
             type = ParamType.Float,
             floatValue = v
-            // material left null -> assign in Inspector per mood entry
         };
         MaterialParam CP(string prop, Color c) => new MaterialParam
         {
             propertyName = prop,
             type = ParamType.Color,
             colorValue = c
-            // material left null -> assign in Inspector per mood entry
         };
         Color HEX(string hex)
         {
@@ -449,231 +545,76 @@ public class MoodFXDirector : MonoBehaviour
 
         // ---- Mood tints (also used for _TintColor) ----
         var T_Happy = HEX("#FFD9E6"); // soft pink-rose
-        var T_Sad = HEX("#8BB4FF"); // cool blue
-        var T_Nost = HEX("#D8BFA2"); // sepia beige
-        var T_Fury = HEX("#FF6A6A"); // hot red
-        var T_Trig = HEX("#FF9EDB"); // punchy pink-magenta
-        var T_Pity = HEX("#CABEFF"); // soft lavender
-        var T_Joy = HEX("#FFC7DA"); // calm pink
+        var T_Sad = HEX("#8BB4FF");   // cool blue
+        var T_Nost = HEX("#D8BFA2");  // sepia beige
+        var T_Fury = HEX("#FF6A6A");  // hot red
+        var T_Trig = HEX("#FF9EDB");  // punchy pink-magenta
+        var T_Pity = HEX("#CABEFF");  // soft lavender
+        var T_Joy = HEX("#FFC7DA");   // calm pink
 
         moods = new Mood[]
         {
-            // -------------------- HAPPINESS --------------------
             new Mood {
                 id = MoodId.Happiness,
-                lightColor = new Color(1.00f, 0.95f, 0.85f),
-                lightIntensity = 1.10f, lightTemperature = 6800f,
+                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.95f, 0.85f),
+                lightIntensityMul = 1.10f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
                 defaultFadeSeconds = 1.0f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = 0.20f,
-                    saturation = 12f,    // -100..100
-                    contrast = 6f,       // -100..100
-                    colorFilter = T_Happy,
-                    bloomIntensity = 0.55f,
-                    bloomThreshold = 1.05f,
-                    vignetteIntensity = 0.10f,
-                    vignetteSmoothness = 0.22f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Happy),
-                    FP("_TintStrength",0.35f),
-                    FP("_Desaturate",  0.00f),
-                    FP("_LensWarp",    0.00f),
-                    FP("_Glitch",      0.00f),
-                    FP("_TimeWarp",    0.00f),
-                    FP("_VignetteBoost",0.00f),
-                    FP("_BloomBoost",  0.10f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = 0.20f, saturation = 12f, contrast = 6f, colorFilter = T_Happy, bloomIntensity = 0.55f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Happy), FP("_TintStrength",0.35f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
             },
-
-            // -------------------- SADNESS --------------------
             new Mood {
                 id = MoodId.Sadness,
-                lightColor = new Color(0.75f, 0.85f, 1.00f),
-                lightIntensity = 0.70f, lightTemperature = 6500f,
+                lightColorBlend = 0.6f, lightColor = new Color(0.75f, 0.85f, 1.00f),
+                lightIntensityMul = 0.70f, lightTemperatureBlend = 0.3f, lightTemperature = 6500f,
                 defaultFadeSeconds = 1.2f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = -0.10f,
-                    saturation = -18f,
-                    contrast = -4f,
-                    colorFilter = T_Sad,
-                    bloomIntensity = 0.20f,
-                    bloomThreshold = 1.20f,
-                    vignetteIntensity = 0.30f,
-                    vignetteSmoothness = 0.48f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Sad),
-                    FP("_TintStrength",0.45f),
-                    FP("_Desaturate",  0.25f),
-                    FP("_LensWarp",    0.02f),
-                    FP("_ColorSplit",  0.03f),
-                    FP("_Glitch",      0.00f),
-                    FP("_TimeWarp",    0.00f),
-                    FP("_VignetteBoost",0.10f),
-                    FP("_BloomBoost",  0.00f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = -0.10f, saturation = -18f, contrast = -4f, colorFilter = T_Sad, bloomIntensity = 0.20f, bloomThreshold = 1.20f, vignetteIntensity = 0.30f, vignetteSmoothness = 0.48f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Sad), FP("_TintStrength",0.45f), FP("_Desaturate",0.25f), FP("_LensWarp",0.02f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.10f), FP("_BloomBoost",0.00f) }
             },
-
-            // -------------------- NOSTALGIC --------------------
             new Mood {
                 id = MoodId.Nostalgic,
-                lightColor = new Color(1.00f, 0.90f, 0.75f),
-                lightIntensity = 0.90f, lightTemperature = 5200f,
+                lightColorBlend = 0.65f, lightColor = new Color(1.00f, 0.90f, 0.75f),
+                lightIntensityMul = 0.90f, lightTemperatureBlend = 0.5f, lightTemperature = 5200f,
                 defaultFadeSeconds = 1.4f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = 0.05f,
-                    saturation = -10f,
-                    contrast = 5f,
-                    colorFilter = T_Nost,
-                    bloomIntensity = 0.35f,
-                    bloomThreshold = 1.10f,
-                    vignetteIntensity = 0.20f,
-                    vignetteSmoothness = 0.38f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Nost),
-                    FP("_TintStrength",0.50f),
-                    FP("_Desaturate",  0.15f),
-                    FP("_Dither",      0.10f),
-                    FP("_FilmFlicker", 0.10f),
-                    FP("_LensWarp",    0.00f),
-                    FP("_ColorSplit",  0.00f),
-                    FP("_Glitch",      0.00f),
-                    FP("_VignetteBoost",0.06f),
-                    FP("_BloomBoost",  0.08f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = 0.05f, saturation = -10f, contrast = 5f, colorFilter = T_Nost, bloomIntensity = 0.35f, bloomThreshold = 1.10f, vignetteIntensity = 0.20f, vignetteSmoothness = 0.38f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Nost), FP("_TintStrength",0.50f), FP("_Desaturate",0.15f), FP("_Dither",0.10f), FP("_FilmFlicker",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.00f), FP("_Glitch",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.08f) }
             },
-
-            // -------------------- FURIOUS --------------------
             new Mood {
                 id = MoodId.Furious,
-                lightColor = new Color(1.00f, 0.55f, 0.45f),
-                lightIntensity = 1.20f, lightTemperature = 5000f,
+                lightColorBlend = 0.85f, lightColor = new Color(1.00f, 0.55f, 0.45f),
+                lightIntensityMul = 1.20f, lightTemperatureBlend = 0.6f, lightTemperature = 5000f,
                 defaultFadeSeconds = 0.6f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = 0.25f,
-                    saturation = 10f,
-                    contrast = 14f,
-                    colorFilter = T_Fury,
-                    bloomIntensity = 0.15f,
-                    bloomThreshold = 1.30f,
-                    vignetteIntensity = 0.40f,
-                    vignetteSmoothness = 0.52f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Fury),
-                    FP("_TintStrength",0.55f),
-                    FP("_Desaturate",  0.00f),
-                    FP("_LensWarp",    0.08f),
-                    FP("_ColorSplit",  0.10f),
-                    FP("_Glitch",      0.20f),
-                    FP("_ScanlineJitter",0.12f),
-                    FP("_TimeWarp",    0.06f),
-                    FP("_VignetteBoost",0.15f),
-                    FP("_BloomBoost",  0.00f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = 0.25f, saturation = 10f, contrast = 14f, colorFilter = T_Fury, bloomIntensity = 0.15f, bloomThreshold = 1.30f, vignetteIntensity = 0.40f, vignetteSmoothness = 0.52f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Fury), FP("_TintStrength",0.55f), FP("_Desaturate",0.00f), FP("_LensWarp",0.08f), FP("_ColorSplit",0.10f), FP("_Glitch",0.20f), FP("_ScanlineJitter",0.12f), FP("_TimeWarp",0.06f), FP("_VignetteBoost",0.15f), FP("_BloomBoost",0.00f) }
             },
-
-            // -------------------- TRIGGERED --------------------
             new Mood {
                 id = MoodId.Triggered,
-                lightColor = new Color(0.90f, 0.80f, 1.00f),
-                lightIntensity = 0.95f, lightTemperature = 7000f,
+                lightColorBlend = 0.75f, lightColor = new Color(0.90f, 0.80f, 1.00f),
+                lightIntensityMul = 0.95f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
                 defaultFadeSeconds = 0.8f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = 0.00f,
-                    saturation = -5f,
-                    contrast = 10f,
-                    colorFilter = T_Trig,
-                    bloomIntensity = 0.00f,
-                    bloomThreshold = 1.40f,
-                    vignetteIntensity = 0.50f,
-                    vignetteSmoothness = 0.55f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Trig),
-                    FP("_TintStrength",0.60f),
-                    FP("_Desaturate",  0.05f),
-                    FP("_LensWarp",    0.15f),
-                    FP("_ColorSplit",  0.25f),
-                    FP("_Glitch",      0.14f),
-                    FP("_TimeWarp",    0.12f),
-                    FP("_VignetteBoost",0.20f),
-                    FP("_BloomBoost",  0.00f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = 0.00f, saturation = -5f, contrast = 10f, colorFilter = T_Trig, bloomIntensity = 0.00f, bloomThreshold = 1.40f, vignetteIntensity = 0.50f, vignetteSmoothness = 0.55f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Trig), FP("_TintStrength",0.60f), FP("_Desaturate",0.05f), FP("_LensWarp",0.15f), FP("_ColorSplit",0.25f), FP("_Glitch",0.14f), FP("_TimeWarp",0.12f), FP("_VignetteBoost",0.20f), FP("_BloomBoost",0.00f) }
             },
-
-            // -------------------- PITY --------------------
             new Mood {
                 id = MoodId.Pity,
-                lightColor = new Color(0.88f, 0.90f, 1.00f),
-                lightIntensity = 0.80f, lightTemperature = 6800f,
+                lightColorBlend = 0.6f, lightColor = new Color(0.88f, 0.90f, 1.00f),
+                lightIntensityMul = 0.80f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
                 defaultFadeSeconds = 1.1f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = -0.05f,
-                    saturation = -12f,
-                    contrast = -2f,
-                    colorFilter = T_Pity,
-                    bloomIntensity = 0.15f,
-                    bloomThreshold = 1.25f,
-                    vignetteIntensity = 0.22f,
-                    vignetteSmoothness = 0.40f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Pity),
-                    FP("_TintStrength",0.40f),
-                    FP("_Desaturate",  0.10f),
-                    FP("_LensWarp",    0.00f),
-                    FP("_ColorSplit",  0.03f),
-                    FP("_Glitch",      0.00f),
-                    FP("_TimeWarp",    0.00f),
-                    FP("_VignetteBoost",0.06f),
-                    FP("_BloomBoost",  0.04f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = -0.05f, saturation = -12f, contrast = -2f, colorFilter = T_Pity, bloomIntensity = 0.15f, bloomThreshold = 1.25f, vignetteIntensity = 0.22f, vignetteSmoothness = 0.40f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Pity), FP("_TintStrength",0.40f), FP("_Desaturate",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.04f) }
             },
-
-            // -------------------- JOYFUL --------------------
             new Mood {
                 id = MoodId.Joyful,
-                lightColor = new Color(1.00f, 0.98f, 0.90f),
-                lightIntensity = 1.15f, lightTemperature = 7000f,
+                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.98f, 0.90f),
+                lightIntensityMul = 1.15f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
                 defaultFadeSeconds = 0.9f,
-                postFX = new PostFXParams {
-                    usePostFX = true,
-                    postExposure = 0.18f,
-                    saturation = 16f,
-                    contrast = 8f,
-                    colorFilter = T_Joy,
-                    bloomIntensity = 0.50f,
-                    bloomThreshold = 1.05f,
-                    vignetteIntensity = 0.10f,
-                    vignetteSmoothness = 0.22f
-                },
-                materialParams = new MaterialParam[] {
-                    CP("_TintColor",   T_Joy),
-                    FP("_TintStrength",0.38f),
-                    FP("_Desaturate",  0.00f),
-                    FP("_LensWarp",    0.00f),
-                    FP("_ColorSplit",  0.03f),
-                    FP("_Glitch",      0.00f),
-                    FP("_TimeWarp",    0.00f),
-                    FP("_VignetteBoost",0.00f),
-                    FP("_BloomBoost",  0.10f)
-                }
+                postFX = new PostFXParams { usePostFX = true, postExposure = 0.18f, saturation = 16f, contrast = 8f, colorFilter = T_Joy, bloomIntensity = 0.50f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
+                materialParams = new MaterialParam[] { CP("_TintColor",T_Joy), FP("_TintStrength",0.38f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
             },
         };
 
         CachePropIds();
     }
 
-    // Optional: assign materials once in the first mood, then copy to all others by property name
     [ContextMenu("Copy Materials From First Mood To All")]
     void CopyMaterialsFromFirstMoodToAll()
     {
@@ -690,13 +631,12 @@ public class MoodFXDirector : MonoBehaviour
                 var tp = mm.materialParams[i];
                 if (tp == null || string.IsNullOrEmpty(tp.propertyName)) continue;
 
-                // find matching property in the first mood
                 for (int j = 0; j < first.Length; j++)
                 {
                     var fp = first[j];
                     if (fp != null && fp.propertyName == tp.propertyName && fp.type == tp.type && fp.material != null)
                     {
-                        tp.material = fp.material; // copy reference
+                        tp.material = fp.material;
                         break;
                     }
                 }
