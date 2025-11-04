@@ -20,7 +20,7 @@ MonoBehaviour:
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1
---- !u!114 &-6833545821769042684
+--- !u!114 &-5090672664596568469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -29,37 +29,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: RFPerceptionPost
+  m_Script: {fileID: 11500000, guid: 4fb8d7964536f3941982a5dff4d77909, type: 3}
+  m_Name: MoodOverlayFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 550
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 59c6688c9b9442449a8122a73c474959, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
---- !u!114 &-2824348137817048348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: RFScreenTnt
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  injectionPoint: 550
-  fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: 1551fb2dd9e210d4e80a37948392fb18, type: 2}
-  passIndex: 0
-  bindDepthStencilAttachment: 0
-  m_Version: 1
+  settings:
+    overlayMaterial: {fileID: 2100000, guid: fe50cd618a524e84a92747bbb43529b8, type: 2}
+    evt: 600
+    materialPass: 0
 --- !u!114 &-1878332245247344467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,11 +90,10 @@ MonoBehaviour:
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
   - {fileID: -1878332245247344467}
-  - {fileID: -6833545821769042684}
   - {fileID: -6863930433906108667}
-  - {fileID: -2824348137817048348}
   - {fileID: 65624872269205284}
-  m_RendererFeatureMap: adc0de57c6d2eee504f519e1475e2aa105970814a36bbea0e4fa602b55e6cdd8244f09407925e900
+  - {fileID: -5090672664596568469}
+  m_RendererFeatureMap: adc0de57c6d2eee505970814a36bbea0244f09407925e9006b26eede2e4c5ab9
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
