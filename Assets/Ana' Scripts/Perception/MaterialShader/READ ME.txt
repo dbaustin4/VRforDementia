@@ -1,8 +1,0 @@
-﻿| Material Name          | Shader Used                   | Notes                                                            |
-| ---------------------- | ----------------------------- | ---------------------------------------------------------------- |
-| `Mat_PerceptionPost`   | `Perception/Simple Post`      | Connected to your **FullScreenPassRendererFeature**              |
-| `Mat_HallucinationFog` | `Perception/HallucinationFog` | Layered fog look (usually on a fullscreen quad or global effect) |
-| `Mat_MaskedBlur`       | `Perception/MaskedBlur`       | Uses RenderTexture mask for focus area blur                      |
-| `Mat_IntangibleDither` | `Perception/IntangibleDither` | Apply to objects that should appear unstable                     |
-| `Mat_ScreenTint`       | `Perception/ScreenTint`       | Global tint/pulse to drive emotional tone                        |
-| `Mat_Afterimage`       | `Perception/Afterimage`       | Adds double-vision echo effect                                   |
