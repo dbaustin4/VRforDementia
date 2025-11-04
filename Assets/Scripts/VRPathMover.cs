@@ -11,7 +11,6 @@ public class VRPathMover : MonoBehaviour
     public CinemachineDollyCart dollyCart;   // Cinemachine DollyCart component
     public Transform ovrRig;                // OVRCameraRig Transform (child of DollyCart)
     public Transform swayTarget;            // Child transform to receive sway/bounce
-    public GameObject playerLocomotion;     // Player movement controller to disable during auto-move
 
     [Header("Path Movement Settings")]
     public float duration = 5f;
@@ -135,9 +134,7 @@ public class VRPathMover : MonoBehaviour
 
     public void StartMovement()
     {
-        if (playerLocomotion != null)
-            playerLocomotion.SetActive(false);
-
+       
         // Reset and align to start of path
         if (dollyCart != null && dollyCart.m_Path != null)
         {
@@ -155,8 +152,6 @@ public class VRPathMover : MonoBehaviour
     {
         moving = false;
 
-        if (playerLocomotion != null)
-            playerLocomotion.SetActive(true);
 
         // Reset sway
         if (swayTarget != null)
