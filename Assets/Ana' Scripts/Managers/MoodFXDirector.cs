@@ -521,10 +521,10 @@ public class MoodFXDirector : MonoBehaviour
     Mood FindMood(MoodId id) => Array.Find(moods, x => x != null && x.id == id);
 
     // -------- Utilities --------
-    [ContextMenu("Seed Seven Default Mood Packages")]
+    [ContextMenu("Seed Seven Default Mood Packages (Overlay Shader)")]
     void SeedDefaults()
     {
-        // Helpers just for seeding (scoped here)
+        // --- Helpers ---
         MaterialParam FP(string prop, float v) => new MaterialParam
         {
             propertyName = prop,
@@ -537,83 +537,140 @@ public class MoodFXDirector : MonoBehaviour
             type = ParamType.Color,
             colorValue = c
         };
-        Color HEX(string hex)
-        {
-            if (ColorUtility.TryParseHtmlString(hex, out var col)) return col;
-            return Color.white;
-        }
+        Color HEX(string hex) => ColorUtility.TryParseHtmlString(hex, out var col) ? col : Color.white;
 
-        // ---- Mood tints (also used for _TintColor) ----
+        // ---- Mood tint swatches ----
         var T_Happy = HEX("#FFD9E6"); // soft pink-rose
-        var T_Sad = HEX("#8BB4FF");   // cool blue
-        var T_Nost = HEX("#D8BFA2");  // sepia beige
-        var T_Fury = HEX("#FF6A6A");  // hot red
-        var T_Trig = HEX("#FF9EDB");  // punchy pink-magenta
-        var T_Pity = HEX("#CABEFF");  // soft lavender
-        var T_Joy = HEX("#FFC7DA");   // calm pink
+        var T_Sad = HEX("#8BB4FF"); // cool blue
+        var T_Nost = HEX("#D8BFA2"); // sepia beige
+        var T_Fury = HEX("#FF6A6A"); // hot red
+        var T_Trig = HEX("#FF9EDB"); // pink-magenta
+        var T_Pity = HEX("#CABEFF"); // soft lavender
+        var T_Joy = HEX("#FFC7DA"); // calm pink
+
+        // NOTE:
+        // - PostFX is OFF (overlay shader does the work).
+        // - Keep lighting as gentle seasoning; adjust if you want stronger lamp influence.
 
         moods = new Mood[]
         {
-            new Mood {
-                id = MoodId.Happiness,
-                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.95f, 0.85f),
-                lightIntensityMul = 1.10f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
-                defaultFadeSeconds = 1.0f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.20f, saturation = 12f, contrast = 6f, colorFilter = T_Happy, bloomIntensity = 0.55f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Happy), FP("_TintStrength",0.35f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
-            },
-            new Mood {
-                id = MoodId.Sadness,
-                lightColorBlend = 0.6f, lightColor = new Color(0.75f, 0.85f, 1.00f),
-                lightIntensityMul = 0.70f, lightTemperatureBlend = 0.3f, lightTemperature = 6500f,
-                defaultFadeSeconds = 1.2f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = -0.10f, saturation = -18f, contrast = -4f, colorFilter = T_Sad, bloomIntensity = 0.20f, bloomThreshold = 1.20f, vignetteIntensity = 0.30f, vignetteSmoothness = 0.48f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Sad), FP("_TintStrength",0.45f), FP("_Desaturate",0.25f), FP("_LensWarp",0.02f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.10f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Nostalgic,
-                lightColorBlend = 0.65f, lightColor = new Color(1.00f, 0.90f, 0.75f),
-                lightIntensityMul = 0.90f, lightTemperatureBlend = 0.5f, lightTemperature = 5200f,
-                defaultFadeSeconds = 1.4f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.05f, saturation = -10f, contrast = 5f, colorFilter = T_Nost, bloomIntensity = 0.35f, bloomThreshold = 1.10f, vignetteIntensity = 0.20f, vignetteSmoothness = 0.38f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Nost), FP("_TintStrength",0.50f), FP("_Desaturate",0.15f), FP("_Dither",0.10f), FP("_FilmFlicker",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.00f), FP("_Glitch",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.08f) }
-            },
-            new Mood {
-                id = MoodId.Furious,
-                lightColorBlend = 0.85f, lightColor = new Color(1.00f, 0.55f, 0.45f),
-                lightIntensityMul = 1.20f, lightTemperatureBlend = 0.6f, lightTemperature = 5000f,
-                defaultFadeSeconds = 0.6f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.25f, saturation = 10f, contrast = 14f, colorFilter = T_Fury, bloomIntensity = 0.15f, bloomThreshold = 1.30f, vignetteIntensity = 0.40f, vignetteSmoothness = 0.52f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Fury), FP("_TintStrength",0.55f), FP("_Desaturate",0.00f), FP("_LensWarp",0.08f), FP("_ColorSplit",0.10f), FP("_Glitch",0.20f), FP("_ScanlineJitter",0.12f), FP("_TimeWarp",0.06f), FP("_VignetteBoost",0.15f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Triggered,
-                lightColorBlend = 0.75f, lightColor = new Color(0.90f, 0.80f, 1.00f),
-                lightIntensityMul = 0.95f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
-                defaultFadeSeconds = 0.8f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.00f, saturation = -5f, contrast = 10f, colorFilter = T_Trig, bloomIntensity = 0.00f, bloomThreshold = 1.40f, vignetteIntensity = 0.50f, vignetteSmoothness = 0.55f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Trig), FP("_TintStrength",0.60f), FP("_Desaturate",0.05f), FP("_LensWarp",0.15f), FP("_ColorSplit",0.25f), FP("_Glitch",0.14f), FP("_TimeWarp",0.12f), FP("_VignetteBoost",0.20f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Pity,
-                lightColorBlend = 0.6f, lightColor = new Color(0.88f, 0.90f, 1.00f),
-                lightIntensityMul = 0.80f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
-                defaultFadeSeconds = 1.1f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = -0.05f, saturation = -12f, contrast = -2f, colorFilter = T_Pity, bloomIntensity = 0.15f, bloomThreshold = 1.25f, vignetteIntensity = 0.22f, vignetteSmoothness = 0.40f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Pity), FP("_TintStrength",0.40f), FP("_Desaturate",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.04f) }
-            },
-            new Mood {
-                id = MoodId.Joyful,
-                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.98f, 0.90f),
-                lightIntensityMul = 1.15f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
-                defaultFadeSeconds = 0.9f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.18f, saturation = 16f, contrast = 8f, colorFilter = T_Joy, bloomIntensity = 0.50f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Joy), FP("_TintStrength",0.38f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
-            },
+        new Mood {
+            id = MoodId.Happiness,
+            lightColorBlend = 0.50f, lightColor = new Color(1.00f, 0.95f, 0.85f),
+            lightIntensityMul = 1.10f, lightTemperatureBlend = 0.50f, lightTemperature = 6800f,
+            defaultFadeSeconds = 1.0f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Happy),
+                FP("_TintStrength", 0.28f),
+                FP("_Desaturation", 0.00f),
+                FP("_Contrast", 0.06f),
+                FP("_VignetteStrength", 0.10f),
+                FP("_PulseAmp", 0.05f),
+                FP("_PulseHz", 0.20f)
+            }
+        },
+        new Mood {
+            id = MoodId.Sadness,
+            lightColorBlend = 0.60f, lightColor = new Color(0.75f, 0.85f, 1.00f),
+            lightIntensityMul = 0.70f, lightTemperatureBlend = 0.30f, lightTemperature = 6500f,
+            defaultFadeSeconds = 1.2f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Sad),
+                FP("_TintStrength", 0.35f),
+                FP("_Desaturation", 0.25f),
+                FP("_Contrast", -0.04f),
+                FP("_VignetteStrength", 0.30f),
+                FP("_PulseAmp", 0.00f),
+                FP("_PulseHz", 0.20f)
+            }
+        },
+        new Mood {
+            id = MoodId.Nostalgic,
+            lightColorBlend = 0.65f, lightColor = new Color(1.00f, 0.90f, 0.75f),
+            lightIntensityMul = 0.90f, lightTemperatureBlend = 0.50f, lightTemperature = 5200f,
+            defaultFadeSeconds = 1.4f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Nost),
+                FP("_TintStrength", 0.50f),
+                FP("_Desaturation", 0.15f),
+                FP("_Contrast", 0.05f),
+                FP("_VignetteStrength", 0.20f),
+                FP("_PulseAmp", 0.03f),
+                FP("_PulseHz", 0.15f)
+            }
+        },
+        new Mood {
+            id = MoodId.Furious,
+            lightColorBlend = 0.85f, lightColor = new Color(1.00f, 0.55f, 0.45f),
+            lightIntensityMul = 1.20f, lightTemperatureBlend = 0.60f, lightTemperature = 5000f,
+            defaultFadeSeconds = 0.6f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Fury),
+                FP("_TintStrength", 0.55f),
+                FP("_Desaturation", 0.00f),
+                FP("_Contrast", 0.14f),
+                FP("_VignetteStrength", 0.40f),
+                FP("_PulseAmp", 0.12f),
+                FP("_PulseHz", 0.50f)
+            }
+        },
+        new Mood {
+            id = MoodId.Triggered,
+            lightColorBlend = 0.75f, lightColor = new Color(0.90f, 0.80f, 1.00f),
+            lightIntensityMul = 0.95f, lightTemperatureBlend = 0.60f, lightTemperature = 7000f,
+            defaultFadeSeconds = 0.8f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Trig),
+                FP("_TintStrength", 0.60f),
+                FP("_Desaturation", 0.05f),
+                FP("_Contrast", 0.10f),
+                FP("_VignetteStrength", 0.50f),
+                FP("_PulseAmp", 0.14f),
+                FP("_PulseHz", 0.60f)
+            }
+        },
+        new Mood {
+            id = MoodId.Pity,
+            lightColorBlend = 0.60f, lightColor = new Color(0.88f, 0.90f, 1.00f),
+            lightIntensityMul = 0.80f, lightTemperatureBlend = 0.50f, lightTemperature = 6800f,
+            defaultFadeSeconds = 1.1f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Pity),
+                FP("_TintStrength", 0.40f),
+                FP("_Desaturation", 0.10f),
+                FP("_Contrast", -0.02f),
+                FP("_VignetteStrength", 0.22f),
+                FP("_PulseAmp", 0.02f),
+                FP("_PulseHz", 0.20f)
+            }
+        },
+        new Mood {
+            id = MoodId.Joyful,
+            lightColorBlend = 0.50f, lightColor = new Color(1.00f, 0.98f, 0.90f),
+            lightIntensityMul = 1.15f, lightTemperatureBlend = 0.60f, lightTemperature = 7000f,
+            defaultFadeSeconds = 0.9f,
+            postFX = new PostFXParams { usePostFX = false },
+            materialParams = new MaterialParam[] {
+                CP("_TintColor", T_Joy),
+                FP("_TintStrength", 0.38f),
+                FP("_Desaturation", 0.00f),
+                FP("_Contrast", 0.08f),
+                FP("_VignetteStrength", 0.10f),
+                FP("_PulseAmp", 0.04f),
+                FP("_PulseHz", 0.25f)
+            }
+        },
         };
 
         CachePropIds();
     }
+
 
     [ContextMenu("Copy Materials From First Mood To All")]
     void CopyMaterialsFromFirstMoodToAll()
