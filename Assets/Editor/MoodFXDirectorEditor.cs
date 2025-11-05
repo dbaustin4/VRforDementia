@@ -5,131 +5,88 @@ using UnityEngine;
 [CustomEditor(typeof(MoodFXDirector))]
 public class MoodFXDirectorEditor : Editor
 {
-    // Works with either "currentMood" or "startMood"
-    SerializedProperty moodProp;             // current/start
     SerializedProperty targetVolumeProp;
+    SerializedProperty masterIntensityProp;
+    SerializedProperty initialMoodProp;
 
-    SerializedProperty NeutralProp;
-    SerializedProperty HappinessProp;
-    SerializedProperty SadnessProp;
-    SerializedProperty NostalgicProp;
-    SerializedProperty FuriousProp;
-    SerializedProperty TriggeredProp;
+    SerializedProperty neutralProp, happinessProp, sadnessProp, nostalgicProp, furiousProp, triggeredProp;
 
     void OnEnable()
     {
-        // Try both names so it matches whatever your runtime uses
-        moodProp = serializedObject.FindProperty("currentMood");
-        if (moodProp == null) moodProp = serializedObject.FindProperty("startMood");
-
         targetVolumeProp = serializedObject.FindProperty("targetVolume");
+        masterIntensityProp = serializedObject.FindProperty("masterIntensity");
+        initialMoodProp = serializedObject.FindProperty("initialMood");
 
-        NeutralProp = serializedObject.FindProperty("Neutral");
-        HappinessProp = serializedObject.FindProperty("Happiness");
-        SadnessProp = serializedObject.FindProperty("Sadness");
-        NostalgicProp = serializedObject.FindProperty("Nostalgic");
-        FuriousProp = serializedObject.FindProperty("Furious");
-        TriggeredProp = serializedObject.FindProperty("Triggered");
+        neutralProp = serializedObject.FindProperty("Neutral");
+        happinessProp = serializedObject.FindProperty("Happiness");
+        sadnessProp = serializedObject.FindProperty("Sadness");
+        nostalgicProp = serializedObject.FindProperty("Nostalgic");
+        furiousProp = serializedObject.FindProperty("Furious");
+        triggeredProp = serializedObject.FindProperty("Triggered");
     }
 
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
+        var t = (MoodFXDirector)target;
 
-        if (targetVolumeProp != null) EditorGUILayout.PropertyField(targetVolumeProp);
+        EditorGUILayout.PropertyField(targetVolumeProp, new GUIContent("Target Volume"));
+        EditorGUILayout.Slider(masterIntensityProp, 0f, 1f, new GUIContent("Master Intensity"));
+        EditorGUILayout.PropertyField(initialMoodProp, new GUIContent("Initial Mood"));
 
-        // Mood selector (label adapts)
-        if (moodProp != null)
+        EditorGUILayout.Space(6);
+        using (new EditorGUILayout.HorizontalScope())
         {
-            string niceLabel = moodProp.name == "startMood" ? "Start / Current Mood" : "Current Mood";
-            EditorGUILayout.PropertyField(moodProp, new GUIContent(niceLabel));
-
-            // Quick row of buttons for instant testing
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                if (GUILayout.Button("Neutral")) SetMoodAndApply(0);
-                if (GUILayout.Button("Happiness")) SetMoodAndApply(1);
-                if (GUILayout.Button("Sadness")) SetMoodAndApply(2);
-            }
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                if (GUILayout.Button("Nostalgic")) SetMoodAndApply(3);
-                if (GUILayout.Button("Furious")) SetMoodAndApply(4);
-                if (GUILayout.Button("Triggered")) SetMoodAndApply(5);
-            }
-
-            if (GUILayout.Button("Apply Selected Mood")) ApplyNow();
+            if (GUILayout.Button("Neutral")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Neutral;
+            if (GUILayout.Button("Happiness")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Happiness;
+            if (GUILayout.Button("Sadness")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Sadness;
+        }
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            if (GUILayout.Button("Nostalgic")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Nostalgic;
+            if (GUILayout.Button("Furious")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Furious;
+            if (GUILayout.Button("Triggered")) initialMoodProp.enumValueIndex = (int)MoodFXDirector.MoodId.Triggered;
         }
 
-        // Presets (only if your runtime exposes them)
-        DrawPreset("Neutral", NeutralProp);
-        DrawPreset("Happiness", HappinessProp);
-        DrawPreset("Sadness", SadnessProp);
-        DrawPreset("Nostalgic", NostalgicProp);
-        DrawPreset("Furious", FuriousProp);
-        DrawPreset("Triggered", TriggeredProp);
+        EditorGUILayout.Space(4);
+        if (GUILayout.Button("Apply Selected Mood (Instant)"))
+        {
+            serializedObject.ApplyModifiedProperties();
+            t.ApplySelectedMoodImmediate(); // zero blend
+            ShowToast($"Applied {t.initialMood} (Master {t.masterIntensity:0.00})");
+        }
+
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Presets", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox("Click 'Load Built-in Presets' to auto-fill all moods. Then fine-tune and/or use Master Intensity.", MessageType.Info);
+
+        if (GUILayout.Button("Load Built-in Presets"))
+        {
+            Undo.RecordObject(t, "Load Built-in Presets");
+            t.LoadBuiltInPresets();
+            EditorUtility.SetDirty(t);
+            ShowToast("Mood presets loaded");
+        }
+
+        EditorGUILayout.Space(6);
+        EditorGUILayout.PropertyField(neutralProp, true);
+        EditorGUILayout.PropertyField(happinessProp, true);
+        EditorGUILayout.PropertyField(sadnessProp, true);
+        EditorGUILayout.PropertyField(nostalgicProp, true);
+        EditorGUILayout.PropertyField(furiousProp, true);
+        EditorGUILayout.PropertyField(triggeredProp, true);
 
         serializedObject.ApplyModifiedProperties();
+
+        EditorGUILayout.Space(8);
+        if (!t.targetVolume)
+            EditorGUILayout.HelpBox("No Target Volume assigned. The script will auto-find/create one at runtime.", MessageType.Warning);
     }
 
-    void SetMoodAndApply(int enumIndex)
+    void ShowToast(string msg)
     {
-        if (moodProp == null) return;
-        moodProp.enumValueIndex = enumIndex;
-        serializedObject.ApplyModifiedProperties();
-        ApplyNow();
-    }
-
-    void ApplyNow()
-    {
-        foreach (var t in targets)
-        {
-            var dir = (MoodFXDirector)t;
-            // Your runtime already has ApplyCurrentMood(); call it to push values into the Volume
-            dir.ApplyCurrentMood();
-            EditorUtility.SetDirty(dir);
-        }
-    }
-
-    void DrawPreset(string label, SerializedProperty preset)
-    {
-        if (preset == null) return;
-
-        using (new EditorGUILayout.VerticalScope("box"))
-        {
-            preset.isExpanded = EditorGUILayout.Foldout(preset.isExpanded, label, true);
-            if (!preset.isExpanded) return;
-
-            EditorGUI.indentLevel++;
-
-            DrawIfExists(preset, "exposure");
-            DrawIfExists(preset, "contrast");
-            DrawIfExists(preset, "saturation");
-            DrawIfExists(preset, "colorFilter");
-
-            EditorGUILayout.Space(2);
-            EditorGUILayout.LabelField("Vignette", EditorStyles.boldLabel);
-            DrawIfExists(preset, "vignetteIntensity");
-            DrawIfExists(preset, "vignetteSmoothness");
-
-            EditorGUILayout.Space(2);
-            EditorGUILayout.LabelField("Bloom", EditorStyles.boldLabel);
-            DrawIfExists(preset, "bloomIntensity");
-
-            EditorGUILayout.Space(2);
-            EditorGUILayout.LabelField("Tone (Lift / Gamma / Gain)", EditorStyles.boldLabel);
-            DrawIfExists(preset, "lift");
-            DrawIfExists(preset, "gamma");
-            DrawIfExists(preset, "gain");
-
-            EditorGUI.indentLevel--;
-        }
-    }
-
-    void DrawIfExists(SerializedProperty parent, string child)
-    {
-        var p = parent.FindPropertyRelative(child);
-        if (p != null) EditorGUILayout.PropertyField(p);
+        // tiny editor feedback
+        Debug.Log($"[MoodFX] {msg}");
+        SceneView.RepaintAll();
     }
 }
 #endif

@@ -45,120 +45,76 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetVolume: {fileID: 0}
-  profileOverride: {fileID: 0}
-  defaultBlendSeconds: 1.5
-  blendCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  startMood: 0
-  neutral:
+  initialMood: 0
+  Neutral:
     exposure: 0
     contrast: 0
     saturation: 0
-    colorFilter: {r: 1, g: 1, b: 1, a: 1}
-    temp: 0
-    tint: 0
-    vignetteIntensity: 0.2
-    vignetteSmoothness: 0.3
+    colorFilter: {r: 2.3383648, g: 2.0074642, b: 2.0074642, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
     bloomIntensity: 0
-    bloomThreshold: 0.9
-    lensDistortion: 0
-    lensDistortionScale: 1
-    grainIntensity: 0
-    grainResponse: 0.8
-  happiness:
-    exposure: 0.35
-    contrast: 10
-    saturation: 25
-    colorFilter: {r: 1.05, g: 1.05, b: 1, a: 1}
-    temp: 10
-    tint: -5
-    vignetteIntensity: 0.12
-    vignetteSmoothness: 0.25
-    bloomIntensity: 0.5
-    bloomThreshold: 0.8
-    lensDistortion: -0.05
-    lensDistortionScale: 1
-    grainIntensity: 0.05
-    grainResponse: 0.8
-  sadness:
-    exposure: -0.3
-    contrast: -10
-    saturation: -35
-    colorFilter: {r: 0.9, g: 0.95, b: 1.05, a: 1}
-    temp: -8
-    tint: 5
-    vignetteIntensity: 0.35
-    vignetteSmoothness: 0.5
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
+  Happiness:
+    exposure: 0
+    contrast: 0
+    saturation: 0
+    colorFilter: {r: 0, g: 0, b: 0, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
     bloomIntensity: 0
-    bloomThreshold: 1
-    lensDistortion: 0
-    lensDistortionScale: 1
-    grainIntensity: 0.15
-    grainResponse: 0.6
-  nostalgic:
-    exposure: 0.1
-    contrast: 5
-    saturation: -15
-    colorFilter: {r: 1.03, g: 0.98, b: 0.9, a: 1}
-    temp: 8
-    tint: 8
-    vignetteIntensity: 0.25
-    vignetteSmoothness: 0.45
-    bloomIntensity: 0.2
-    bloomThreshold: 0.85
-    lensDistortion: -0.02
-    lensDistortionScale: 1
-    grainIntensity: 0.25
-    grainResponse: 0.5
-  furious:
-    exposure: 0.05
-    contrast: 25
-    saturation: 10
-    colorFilter: {r: 1.08, g: 0.92, b: 0.92, a: 1}
-    temp: 20
-    tint: -10
-    vignetteIntensity: 0.4
-    vignetteSmoothness: 0.6
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
+  Sadness:
+    exposure: 0
+    contrast: 0
+    saturation: 0
+    colorFilter: {r: 0, g: 0, b: 0, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
     bloomIntensity: 0
-    bloomThreshold: 1
-    lensDistortion: 0.1
-    lensDistortionScale: 0.95
-    grainIntensity: 0.2
-    grainResponse: 0.5
-  triggered:
-    exposure: -0.1
-    contrast: 20
-    saturation: -25
-    colorFilter: {r: 0.95, g: 1, b: 1.05, a: 1}
-    temp: -15
-    tint: 15
-    vignetteIntensity: 0.55
-    vignetteSmoothness: 0.65
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
+  Nostalgic:
+    exposure: 0
+    contrast: 0
+    saturation: 0
+    colorFilter: {r: 0, g: 0, b: 0, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
     bloomIntensity: 0
-    bloomThreshold: 1
-    lensDistortion: 0.2
-    lensDistortionScale: 0.9
-    grainIntensity: 0.35
-    grainResponse: 0.45
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
+  Furious:
+    exposure: 0
+    contrast: 0
+    saturation: 0
+    colorFilter: {r: 0, g: 0, b: 0, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
+    bloomIntensity: 0
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
+  Triggered:
+    exposure: 0
+    contrast: 0
+    saturation: 0
+    colorFilter: {r: 0, g: 0, b: 0, a: 0}
+    vignetteIntensity: 0
+    vignetteSmoothness: 0
+    bloomIntensity: 0
+    lift: {r: 0, g: 0, b: 0, a: 0}
+    gamma: {r: 0, g: 0, b: 0, a: 0}
+    gain: {r: 0, g: 0, b: 0, a: 0}
+    defaultBlendSeconds: 0
