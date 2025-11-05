@@ -705,7 +705,7 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: initialMood
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -714,33 +714,38 @@ PrefabInstance:
       objectReference: {fileID: 1346932178}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
+      propertyPath: _selectedMood
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
       propertyPath: Furious.gain.b
-      value: 0.94
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.gain.g
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.gain.r
-      value: 1.1
+      value: 1.03
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.lift.b
-      value: 0.94
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.lift.g
-      value: 0.96
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.lift.r
-      value: 1.04
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -775,47 +780,47 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gain.b
-      value: 1.04
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gain.g
-      value: 0.98
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gain.r
-      value: 0.96
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.lift.b
-      value: 1.02
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.lift.g
-      value: 0.96
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.lift.r
-      value: 0.95
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.gamma.b
-      value: 0.94
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.gamma.g
-      value: 0.96
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.gamma.r
-      value: 1.06
+      value: 1.02
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -835,17 +840,17 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gamma.b
-      value: 1.02
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gamma.g
-      value: 0.99
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.gamma.r
-      value: 0.98
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -855,32 +860,32 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.contrast
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.exposure
-      value: 0.15
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.gain.b
-      value: 0.98
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.gain.g
-      value: 1.02
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.gain.r
-      value: 1.06
+      value: 1.02
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.lift.b
-      value: 0.98
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -890,12 +895,12 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.lift.r
-      value: 1.02
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.gain.b
-      value: 0.94
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -905,67 +910,67 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.gain.r
-      value: 1.04
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.lift.b
-      value: 0.92
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.lift.g
-      value: 0.98
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.lift.r
-      value: 1.02
+      value: 1.005
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.contrast
-      value: -5
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.exposure
-      value: -0.35
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gain.b
-      value: 1.1
+      value: 1.03
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gain.g
-      value: 1.02
+      value: 1.005
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gain.r
-      value: 0.98
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.lift.b
-      value: 1.06
+      value: 1.02
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.lift.g
-      value: 1
+      value: 1.005
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.lift.r
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.gamma.b
-      value: 0.98
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -975,92 +980,92 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.gamma.r
-      value: 1.02
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.gamma.b
-      value: 0.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Nostalgic.gamma.g
       value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
+      propertyPath: Nostalgic.gamma.g
+      value: 0.995
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
       propertyPath: Nostalgic.gamma.r
-      value: 1.02
+      value: 1.005
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gamma.b
-      value: 1.06
+      value: 1.02
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gamma.g
-      value: 1
+      value: 1.005
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.gamma.r
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.saturation
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.contrast
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.exposure
-      value: 0.35
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.contrast
-      value: -10
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.exposure
-      value: -0.1
+      value: -0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.saturation
-      value: -35
+      value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.contrast
-      value: -15
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.exposure
-      value: 0.1
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.saturation
-      value: 25
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.saturation
-      value: -10
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.saturation
-      value: -45
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1070,17 +1075,17 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.colorFilter.b
-      value: 0.9
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.colorFilter.g
-      value: 0.92
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.colorFilter.r
-      value: 1.08
+      value: 1.02
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1110,32 +1115,32 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.colorFilter.b
-      value: 1.05
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.colorFilter.g
-      value: 0.95
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.colorFilter.r
-      value: 0.9
+      value: 0.99
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Furious.bloomIntensity
-      value: 0.4
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Neutral.bloomIntensity
-      value: 0.6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Sadness.bloomIntensity
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1145,17 +1150,17 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.colorFilter.b
-      value: 0.9
+      value: 0.985
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.colorFilter.g
-      value: 0.98
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.colorFilter.r
-      value: 1.05
+      value: 1.015
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1165,17 +1170,17 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.colorFilter.b
-      value: 0.88
+      value: 0.985
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.colorFilter.g
-      value: 0.98
+      value: 0.995
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.colorFilter.r
-      value: 1.05
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1185,92 +1190,92 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.colorFilter.b
-      value: 1.06
+      value: 0.99410516
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.colorFilter.g
-      value: 0.96
+      value: 0.9932985
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.colorFilter.r
-      value: 0.92
+      value: 1.0200001
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.bloomIntensity
-      value: 1.6
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.bloomIntensity
-      value: 1
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.bloomIntensity
-      value: 2.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Furious.vignetteIntensity
-      value: 0.48
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Neutral.vignetteIntensity
-      value: 0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Sadness.vignetteIntensity
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Furious.vignetteSmoothness
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Neutral.vignetteSmoothness
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Sadness.vignetteSmoothness
-      value: 0.55
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Furious.defaultBlendSeconds
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Happiness.vignetteIntensity
-      value: 0.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Neutral.defaultBlendSeconds
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Nostalgic.vignetteIntensity
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: Sadness.defaultBlendSeconds
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
+      propertyPath: Furious.vignetteIntensity
+      value: 0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Neutral.vignetteIntensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Sadness.vignetteIntensity
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Furious.vignetteSmoothness
+      value: 0.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Neutral.vignetteSmoothness
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Sadness.vignetteSmoothness
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Furious.defaultBlendSeconds
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Happiness.vignetteIntensity
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Neutral.defaultBlendSeconds
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Nostalgic.vignetteIntensity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
+      propertyPath: Sadness.defaultBlendSeconds
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
+        type: 3}
       propertyPath: Triggered.vignetteIntensity
-      value: 0.4
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
@@ -1285,22 +1290,22 @@ PrefabInstance:
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.vignetteSmoothness
-      value: 0.65
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Happiness.defaultBlendSeconds
-      value: 0.8
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Nostalgic.defaultBlendSeconds
-      value: 1.2
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1085282780801400920, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
         type: 3}
       propertyPath: Triggered.defaultBlendSeconds
-      value: 0.9
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
