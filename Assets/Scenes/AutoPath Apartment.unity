@@ -158,8 +158,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: {fileID: 42827459}
-  moodFXDirector: {fileID: 0}
-  moodToTrigger: 5
+  moodFXDirector: {fileID: 822440753}
+  moodToTrigger: 2
   blendDuration: 1
 --- !u!114 &42827459
 MonoBehaviour:
@@ -468,77 +468,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: {fileID: 86731223}
-  moodFXDirector: {fileID: 0}
-  moodToTrigger: 5
+  moodFXDirector: {fileID: 822440753}
+  moodToTrigger: 1
   blendDuration: 1
---- !u!1001 &90907835
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 16.76558
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -10.000095
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 15.634411
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 595462962198172635, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 750115963578253704, guid: a67bc6c3ac1e01248a2372b95b14a7ef,
-        type: 3}
-      propertyPath: m_Name
-      value: MoodFXDirector
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a67bc6c3ac1e01248a2372b95b14a7ef, type: 3}
 --- !u!1 &107396420
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,8 +506,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: {fileID: 107396422}
-  moodFXDirector: {fileID: 0}
-  moodToTrigger: 5
+  moodFXDirector: {fileID: 822440753}
+  moodToTrigger: 4
   blendDuration: 1
 --- !u!114 &107396422
 MonoBehaviour:
@@ -1126,6 +1058,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 107396427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &647049088
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.76558
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -10.000095
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 15.634411
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718923433452493229, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7367280309109338573, guid: b531eb5739100284f9f0e3fd7defbbd1,
+        type: 3}
+      propertyPath: m_Name
+      value: MoodFXDirector
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b531eb5739100284f9f0e3fd7defbbd1, type: 3}
 --- !u!1 &657170133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1638,6 +1638,18 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &822440753 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6176065619869968087, guid: b531eb5739100284f9f0e3fd7defbbd1,
+    type: 3}
+  m_PrefabInstance: {fileID: 647049088}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &825391422
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,8 +2406,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: {fileID: 1260309246}
-  moodFXDirector: {fileID: 0}
-  moodToTrigger: 5
+  moodFXDirector: {fileID: 822440753}
+  moodToTrigger: 3
   blendDuration: 1
 --- !u!114 &1260309246
 MonoBehaviour:
@@ -8029,7 +8041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: {fileID: 2000885288}
-  moodFXDirector: {fileID: 0}
+  moodFXDirector: {fileID: 822440753}
   moodToTrigger: 5
   blendDuration: 1
 --- !u!114 &2000885288
@@ -8207,4 +8219,4 @@ SceneRoots:
   - {fileID: 2000885293}
   - {fileID: 1523855062}
   - {fileID: 1158237425}
-  - {fileID: 90907835}
+  - {fileID: 647049088}
