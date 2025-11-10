@@ -19,7 +19,7 @@ public class SimpleInteraction : MonoBehaviour
         float triggerLeft = OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger);
         float triggerRight = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger);
 
-        Debug.Log($"Left Trigger: {triggerLeft}, Right Trigger: {triggerRight}");
+        //Debug.Log($"Left Trigger: {triggerLeft}, Right Trigger: {triggerRight}");
 
         if (triggerRight > 0.9f && !fire)
         {

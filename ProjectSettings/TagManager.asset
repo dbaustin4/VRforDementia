@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Controller
+  - RightMiddle
+  - RightThumb
+  - RightPalm
+  - RightIndex
+  - Palm
   layers:
   - Default
   - TransparentFX
