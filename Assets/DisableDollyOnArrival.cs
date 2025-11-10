@@ -1,26 +1,39 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Cinemachine;
 using System.Collections;
 
 public class DisableDollyOnArrival : MonoBehaviour
 {
-    [Tooltip("Reference to the Cinemachine Dolly Cart that moves the XR rig.")]
+    [Header("References")]
     public CinemachineDollyCart dollyCart;
 
-    [Tooltip("Set this to the path length where the cart should stop.")]
-    public float stopAtPosition = 0f;
+    [Header("Settings")]
+    [Tooltip("How close to the end of the path before disabling.")]
+    public float endThreshold = 0.05f;
 
-    [Tooltip("Optional: delay before disabling (seconds)")]
+    [Tooltip("Optional delay before disabling after arrival (seconds).")]
     public float disableDelay = 0.5f;
 
+    private CinemachinePathBase _path;
     private bool _hasStopped = false;
+
+    void Start()
+    {
+        if (dollyCart == null)
+        {
+            dollyCart = GetComponent<CinemachineDollyCart>();
+        }
+
+        _path = dollyCart.m_Path;
+    }
 
     void Update()
     {
-        if (dollyCart == null) return;
+        if (_hasStopped || dollyCart == null || _path == null)
+            return;
 
-        // Check if we've reached (or passed) the end
-        if (!_hasStopped && dollyCart.m_Position >= stopAtPosition)
+        // Check if we're near the end of the path
+        if (dollyCart.m_Position >= _path.PathLength - endThreshold)
         {
             _hasStopped = true;
             StartCoroutine(DisableAfterDelay());
@@ -29,24 +42,36 @@ public class DisableDollyOnArrival : MonoBehaviour
 
     private IEnumerator DisableAfterDelay()
     {
+        dollyCart.m_Speed = 0f;
         yield return new WaitForSeconds(disableDelay);
 
-        // Stop motion
-        dollyCart.m_Speed = 0f;
+        // Optional: detach rig
+        if (dollyCart.transform.childCount > 0)
+        {
+            var xrRig = dollyCart.transform.GetChild(0);
+            xrRig.SetParent(null, true);
+        }
 
-        // Disable the dolly components
+        // Just stop the cart, don't disable its GameObject
         dollyCart.enabled = false;
-        gameObject.SetActive(false); // optional: disable the whole dollyCart
 
-        // Optional: re-enable the hands if they broke
-        var hands = FindObjectsOfType<Oculus.Interaction.HandJoint>(); // or your own hand component
+        // Optional: refresh hands
+        yield return RefreshHands();
+
+        Debug.Log("✅ Dolly stopped safely, rig position preserved.");
+    }
+
+
+
+    private IEnumerator RefreshHands()
+    {
+        // This helps fix lost references after movement
+        var hands = FindObjectsOfType<Oculus.Interaction.HandJoint>();
         foreach (var hand in hands)
         {
             hand.gameObject.SetActive(false);
-            yield return null; // one frame
+            yield return null; // wait one frame
             hand.gameObject.SetActive(true);
         }
-
-        Debug.Log("Dolly disabled and hands refreshed.");
     }
 }
