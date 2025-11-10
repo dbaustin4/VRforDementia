@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &750115963578253704
+--- !u!1 &7367280309109338573
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 595462962198172635}
-  - component: {fileID: 1085282780801400920}
+  - component: {fileID: 4718923433452493229}
+  - component: {fileID: 6176065619869968087}
   m_Layer: 0
   m_Name: MoodFXDirector
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &595462962198172635
+--- !u!4 &4718923433452493229
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 750115963578253704}
+  m_GameObject: {fileID: 7367280309109338573}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.76558, y: -10.000095, z: 15.634411}
@@ -32,89 +32,85 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1085282780801400920
+--- !u!114 &6176065619869968087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 750115963578253704}
+  m_GameObject: {fileID: 7367280309109338573}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetVolume: {fileID: 0}
-  initialMood: 0
+  MasterIntensity: 0.95
+  InitialMood: 1
+  _selectedMood: 2
   Neutral:
     exposure: 0
     contrast: 0
     saturation: 0
-    colorFilter: {r: 2.3383648, g: 2.0074642, b: 2.0074642, a: 0}
+    colorFilter: {r: 1, g: 1, b: 1, a: 1}
     vignetteIntensity: 0
-    vignetteSmoothness: 0
+    vignetteSmoothness: 0.3
     bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    lift: {r: 1, g: 1, b: 1, a: 0}
+    gamma: {r: 1, g: 1, b: 1, a: 0}
+    gain: {r: 1, g: 1, b: 1, a: 0}
   Happiness:
-    exposure: 0
-    contrast: 0
-    saturation: 0
-    colorFilter: {r: 0, g: 0, b: 0, a: 0}
-    vignetteIntensity: 0
-    vignetteSmoothness: 0
-    bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    exposure: 0.2
+    contrast: 10
+    saturation: 40
+    colorFilter: {r: 1.015, g: 1, b: 0.985, a: 1}
+    vignetteIntensity: 0.05
+    vignetteSmoothness: 0.35
+    bloomIntensity: 1
+    lift: {r: 0.82641506, g: 0.81022614, b: 0.80302596, a: 0}
+    gamma: {r: 0.82641506, g: 0.811039, b: 0.78431463, a: 0}
+    gain: {r: 0.87169814, g: 0.84732205, b: 0.77466, a: 0}
   Sadness:
-    exposure: 0
-    contrast: 0
-    saturation: 0
-    colorFilter: {r: 0, g: 0, b: 0, a: 0}
-    vignetteIntensity: 0
-    vignetteSmoothness: 0
-    bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    exposure: -0.09
+    contrast: -3
+    saturation: -12
+    colorFilter: {r: 0.99, g: 1, b: 1.01, a: 1}
+    vignetteIntensity: 0.12
+    vignetteSmoothness: 0.5
+    bloomIntensity: 0.1
+    lift: {r: 0.7132075, g: 0.7132075, b: 0.7132075, a: 0}
+    gamma: {r: 0.995, g: 1, b: 1.01, a: 0}
+    gain: {r: 0.99, g: 0.995, b: 1.01, a: 0}
   Nostalgic:
-    exposure: 0
-    contrast: 0
-    saturation: 0
-    colorFilter: {r: 0, g: 0, b: 0, a: 0}
-    vignetteIntensity: 0
-    vignetteSmoothness: 0
-    bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    exposure: 0.25
+    contrast: -13
+    saturation: -23
+    colorFilter: {r: 1.01, g: 0.995, b: 0.985, a: 1}
+    vignetteIntensity: 0.1
+    vignetteSmoothness: 0.5
+    bloomIntensity: 0.6
+    lift: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0}
+    gamma: {r: 1.005, g: 0.995, b: 0.99, a: 0}
+    gain: {r: 1.01, g: 1, b: 0.99, a: 0}
   Furious:
-    exposure: 0
-    contrast: 0
-    saturation: 0
-    colorFilter: {r: 0, g: 0, b: 0, a: 0}
-    vignetteIntensity: 0
-    vignetteSmoothness: 0
-    bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    exposure: 0.08
+    contrast: 4
+    saturation: 5
+    colorFilter: {r: 1.02, g: 0.995, b: 0.99, a: 1}
+    vignetteIntensity: 0.309
+    vignetteSmoothness: 0.55
+    bloomIntensity: 0.2
+    lift: {r: 0.85660374, g: 0.81007934, b: 0.80650055, a: 0}
+    gamma: {r: 1.02, g: 0.995, b: 0.99, a: 0}
+    gain: {r: 1.03, g: 1, b: 0.99, a: 0}
   Triggered:
-    exposure: 0
-    contrast: 0
-    saturation: 0
-    colorFilter: {r: 0, g: 0, b: 0, a: 0}
-    vignetteIntensity: 0
-    vignetteSmoothness: 0
-    bloomIntensity: 0
-    lift: {r: 0, g: 0, b: 0, a: 0}
-    gamma: {r: 0, g: 0, b: 0, a: 0}
-    gain: {r: 0, g: 0, b: 0, a: 0}
-    defaultBlendSeconds: 0
+    exposure: 0.03
+    contrast: -14
+    saturation: -25
+    colorFilter: {r: 1.0200001, g: 0.9932985, b: 0.99410516, a: 1}
+    vignetteIntensity: 0.385
+    vignetteSmoothness: 0.644
+    bloomIntensity: 1
+    lift: {r: 1, g: 1.005, b: 1.02, a: 0}
+    gamma: {r: 1, g: 1.005, b: 1.02, a: 0}
+    gain: {r: 0.995, g: 1.005, b: 1.03, a: 0}

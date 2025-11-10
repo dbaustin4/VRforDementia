@@ -28,16 +28,16 @@ public class MoodFXDirector : MonoBehaviour
         [Range(0f, 10f)] public float bloomIntensity;
 
         [Header("Tone (Lift/Gamma/Gain)")]
-        public Color lift;
-        public Color gamma;
-        public Color gain;
+        public Color lift;   // shadows
+        public Color gamma;  // midtones
+        public Color gain;   // highlights
     }
 
     // ---------- Inspector ----------
     [Header("Volume (assign OR leave empty to auto-find/create)")]
     public Volume targetVolume;
 
-    [Range(0f, 1f)] public float MasterIntensity = 0.55f;
+    [Range(0f, 1f)] public float MasterIntensity = 0.55f; // bump to ~0.65 if you want stronger separation
     public MoodId InitialMood = MoodId.Happiness;
     [SerializeField] private MoodId _selectedMood = MoodId.Happiness;
 
@@ -67,59 +67,92 @@ public class MoodFXDirector : MonoBehaviour
 
     private void Reset()
     {
-        // Neutral baseline
+        // ===== BASELINE (very light touch) =====
         Neutral = new MoodPreset
         {
             exposure = 0f,
             contrast = 0f,
             saturation = 0f,
             colorFilter = Color.white,
-            vignetteIntensity = 0.1f,
+            vignetteIntensity = 0.10f,
             vignetteSmoothness = 0.25f,
-            bloomIntensity = 0.3f,
+            bloomIntensity = 0.30f,
             lift = new Color(0f, 0f, 0f, 0f),
             gamma = new Color(0f, 0f, 0f, 0f),
             gain = new Color(0f, 0f, 0f, 0f)
         };
 
-        // Bright and warm
+        // HAPPINESS — vibrant, sunlit, summer-day brightness
         Happiness = Neutral;
-        Happiness.saturation = 20f;
-        Happiness.exposure = 0.2f;
-        Happiness.bloomIntensity = 0.6f;
-        Happiness.colorFilter = new Color(1.05f, 1.02f, 0.95f, 1f);
+        Happiness.exposure = 0.35f;                      // bright daylight
+        Happiness.contrast = 20f;                        // crisp, clear edges
+        Happiness.saturation = 45f;                      // rich colors, popping like summer
+        Happiness.bloomIntensity = 0.90f;                // sunlight glow
+        Happiness.vignetteIntensity = 0.05f;             // open and airy
+        Happiness.vignetteSmoothness = 0.65f;
+        Happiness.colorFilter = new Color(1.10f, 1.05f, 0.95f, 1f);  // gentle warm tone, clean whites
+        Happiness.lift = new Color(0.01f, 0.01f, 0.00f, 0f);        // subtle brightness in shadows
+        Happiness.gamma = new Color(0.02f, 0.02f, 0.00f, 0f);        // mids keep warmth
+        Happiness.gain = new Color(0.06f, 0.04f, 0.02f, 0f);        // radiant highlights
 
-        // Cool and muted
+
+
+        // ===== SADNESS — darker/colder, clearly muted =====
+        // Feedback: make it darker, more muted, more distinct from Triggered.
         Sadness = Neutral;
-        Sadness.saturation = -30f;
-        Sadness.exposure = -0.2f;
-        Sadness.vignetteIntensity = 0.22f;
-        Sadness.colorFilter = new Color(0.85f, 0.9f, 1.05f, 1f);
+        Sadness.exposure = -0.35f;
+        Sadness.contrast = -5f;
+        Sadness.saturation = -35f;
+        Sadness.bloomIntensity = 0.15f;
+        Sadness.vignetteIntensity = 0.32f;
+        Sadness.vignetteSmoothness = 0.65f;
+        Sadness.colorFilter = new Color(0.82f, 0.90f, 1.08f, 1f);    // cool, slightly bluish
+        Sadness.lift = new Color(-0.03f, -0.03f, -0.02f, 0f);       // heavier shadows
+        Sadness.gamma = new Color(-0.02f, -0.02f, -0.02f, 0f);       // dimmer mids
 
-        // Slightly faded, nostalgic warmth
+        // NOSTALGIC — deep sepia memory filter
         Nostalgic = Neutral;
-        Nostalgic.saturation = -10f;
-        Nostalgic.contrast = -10f;
-        Nostalgic.colorFilter = new Color(1.02f, 0.98f, 0.9f, 1f);
+        Nostalgic.exposure = -0.05f;                       // slightly dimmed
+        Nostalgic.contrast = -35f;                         // faded film contrast
+        Nostalgic.saturation = -40f;                       // near-monochrome
+        Nostalgic.bloomIntensity = 0.65f;                  // dreamy light bleed
+        Nostalgic.vignetteIntensity = 0.28f;               // soft edge darkening
+        Nostalgic.vignetteSmoothness = 0.70f;
+        Nostalgic.colorFilter = new Color(1.20f, 1.05f, 0.80f, 1f);  // strong golden sepia
+        Nostalgic.lift = new Color(0.06f, 0.04f, 0.02f, 0f);        // lifted blacks (film fade)
+        Nostalgic.gamma = new Color(0.02f, 0.01f, -0.01f, 0f);       // soft mids, warm
+        Nostalgic.gain = new Color(0.04f, 0.02f, -0.02f, 0f);       // warm, creamy highlights
 
-        // Passionate, high energy
+
+
+        // FURIOUS — brutal, cold-red (crimson), oppressive
         Furious = Neutral;
-        Furious.contrast = 25f;
-        Furious.saturation = 10f;
-        Furious.colorFilter = new Color(1.07f, 0.92f, 0.9f, 1f);
-        Furious.vignetteIntensity = 0.28f;
+        Furious.exposure = 0.20f;
+        Furious.contrast = 65f;                            // very punchy
+        Furious.saturation = 30f;
+        Furious.bloomIntensity = 0.05f;                    // no cozy glow
+        Furious.vignetteIntensity = 0.55f;                 // heavy tunnel
+        Furious.vignetteSmoothness = 0.60f;
+        Furious.colorFilter = new Color(1.12f, 0.78f, 0.92f, 1f);   // cold red (leaning magenta/blue)
+        Furious.lift = new Color(-0.07f, -0.06f, -0.08f, 0f);      // cold dark shadows
+        Furious.gamma = new Color(-0.01f, -0.02f, 0.00f, 0f);       // damp greens a touch
+        Furious.gain = new Color(0.10f, -0.02f, 0.02f, 0f);        // searing crimson highlights
 
-        // Subtle anxious/triggered tone — slightly sharper, cooler, tighter
+
+
+        // TRIGGERED — anxious, purple-leaning tension
         Triggered = Neutral;
-        Triggered.contrast = 30f;              // slightly higher contrast
-        Triggered.saturation = -25f;           // lightly desaturated
-        Triggered.exposure = -0.25f;           // touch darker
-        Triggered.vignetteIntensity = 0.30f;   // subtle tunnel vision
-        Triggered.bloomIntensity = 0.2f;       // less bloom, less warmth
-        Triggered.colorFilter = new Color(0.92f, 0.96f, 1.05f, 1f); // soft cool tint
-        Triggered.lift = new Color(-0.02f, -0.02f, -0.02f, 0f);
-        Triggered.gamma = new Color(0.01f, 0.01f, 0.01f, 0f);
-        Triggered.gain = new Color(0f, 0f, 0f, 0f);
+        Triggered.exposure = -0.30f;                       // constricted/airless
+        Triggered.contrast = 45f;                          // tense micro-contrast
+        Triggered.saturation = -18f;                       // muted but not grey
+        Triggered.bloomIntensity = 0.06f;                  // crisp, no softness
+        Triggered.vignetteIntensity = 0.50f;               // claustrophobic
+        Triggered.vignetteSmoothness = 0.62f;
+        Triggered.colorFilter = new Color(0.96f, 0.88f, 1.10f, 1f); // purple bias (uneasy)
+        Triggered.lift = new Color(-0.05f, -0.03f, -0.01f, 0f);    // shadows closing in
+        Triggered.gamma = new Color(0.00f, 0.01f, 0.03f, 0f);       // blue/purple mids
+        Triggered.gain = new Color(0.02f, 0.00f, 0.06f, 0f);       // nervous highlights
+
     }
 
     private void OnValidate()
