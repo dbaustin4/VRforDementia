@@ -925,7 +925,7 @@ GameObject:
   - component: {fileID: 896793950}
   - component: {fileID: 896793949}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: HappinessCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1038,8 +1038,8 @@ Transform:
   m_GameObject: {fileID: 896793948}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.078394, y: 1.4758198, z: -0.88251364}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -5.362, y: 1.427, z: 6.094}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 920984434}
@@ -3654,6 +3654,21 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 18
       objectReference: {fileID: 0}
+    - target: {fileID: 808951037609383995, guid: 49f576a03ece56a4e9c640ed081f6a68,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.484
+      objectReference: {fileID: 0}
+    - target: {fileID: 808951037609383995, guid: 49f576a03ece56a4e9c640ed081f6a68,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.099
+      objectReference: {fileID: 0}
+    - target: {fileID: 808951037609383995, guid: 49f576a03ece56a4e9c640ed081f6a68,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.941
+      objectReference: {fileID: 0}
     - target: {fileID: 808951037621725855, guid: 49f576a03ece56a4e9c640ed081f6a68,
         type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6246,7 +6261,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1918873755
 MonoBehaviour:
   m_ObjectHideFlags: 0
