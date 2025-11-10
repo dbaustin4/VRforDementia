@@ -1,648 +1,272 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+[DisallowMultipleComponent]
+[ExecuteAlways]
 public class MoodFXDirector : MonoBehaviour
 {
-    // -------- Types --------
-    public enum ParamType { Float, Color }
-
-    public enum MoodId
-    {
-        Happiness,
-        Sadness,
-        Nostalgic,
-        Furious,
-        Triggered,
-        Pity,
-        Joyful
-    }
+    // ---------- Types ----------
+    public enum MoodId { Neutral, Happiness, Sadness, Nostalgic, Furious, Triggered }
 
     [Serializable]
-    public class MaterialParam
+    public struct MoodPreset
     {
-        [Tooltip("Material instance to drive (use unique instances, not sharedMaterial, for per-scene control).")]
-        public Material material;
-
-        [Tooltip("Shader property to set (e.g. _Strength, _TintColor, _BlurAmount).")]
-        public string propertyName = "_Strength";
-
-        [Tooltip("Type of property to set.")]
-        public ParamType type = ParamType.Float;
-
-        [Tooltip("Target value for this mood (float).")]
-        public float floatValue = 0f;
-
-        [Tooltip("Target value for this mood (color).")]
-        public Color colorValue = Color.white;
-
-        // Cache
-        [NonSerialized] public int propId = -1;
-    }
-
-    [Serializable]
-    public class PostFXParams
-    {
-        [Tooltip("Apply post-processing changes for this mood (requires Volume with the relevant overrides).")]
-        public bool usePostFX = false;
-
         [Header("Color Adjustments")]
-        public float postExposure = 0f;
-        [Range(-100f, 100f)] public float saturation = 0f;
-        [Range(-100f, 100f)] public float contrast = 0f;
-        public Color colorFilter = Color.white;
-
-        [Header("Bloom")]
-        [Min(0f)] public float bloomIntensity = 0f;
-        [Min(0f)] public float bloomThreshold = 1f;
+        [Range(-2f, 2f)] public float exposure;
+        [Range(-100f, 100f)] public float contrast;
+        [Range(-100f, 100f)] public float saturation;
+        [ColorUsage(false, true)] public Color colorFilter;
 
         [Header("Vignette")]
-        [Range(0f, 1f)] public float vignetteIntensity = 0f;
-        [Range(0f, 1f)] public float vignetteSmoothness = 0.2f;
+        [Range(0f, 1f)] public float vignetteIntensity;
+        [Range(0f, 1f)] public float vignetteSmoothness;
+
+        [Header("Bloom")]
+        [Range(0f, 10f)] public float bloomIntensity;
+
+        [Header("Tone (Lift/Gamma/Gain)")]
+        public Color lift;
+        public Color gamma;
+        public Color gain;
     }
 
-    [Serializable]
-    public class Mood
+    // ---------- Inspector ----------
+    [Header("Volume (assign OR leave empty to auto-find/create)")]
+    public Volume targetVolume;
+
+    [Range(0f, 1f)] public float MasterIntensity = 0.55f;
+    public MoodId InitialMood = MoodId.Happiness;
+    [SerializeField] private MoodId _selectedMood = MoodId.Happiness;
+
+    [Header("Presets")]
+    public MoodPreset Neutral;
+    public MoodPreset Happiness;
+    public MoodPreset Sadness;
+    public MoodPreset Nostalgic;
+    public MoodPreset Furious;
+    public MoodPreset Triggered;
+
+    // ---------- State ----------
+    private ColorAdjustments colorAdj;
+    private Vignette vignette;
+    private Bloom bloom;
+    private LiftGammaGain liftGammaGain;
+    private Coroutine blendRoutine;
+
+    // ---------- Lifecycle ----------
+    private void OnEnable()
     {
-        [Tooltip("Mood identifier.")]
-        public MoodId id = MoodId.Happiness;
-
-        [Header("Light (relative to each lamp's baseline)")]
-        [Tooltip("0 = keep original lamp color; 1 = fully tint towards this color.")]
-        [Range(0, 1)] public float lightColorBlend = 0.75f;
-        public Color lightColor = Color.white;
-
-        [Tooltip("Multiply each lamp's intensity by this factor (1 = keep original).")]
-        [Range(0.2f, 1.8f)] public float lightIntensityMul = 1.0f;
-
-        [Tooltip("Blend lamp color temperature towards this value (0 = keep, 1 = use this). Only affects lights using temperature.")]
-        [Range(0, 1)] public float lightTemperatureBlend = 0f;
-        [Range(2500, 9000)] public float lightTemperature = 6500f;
-
-        [Header("Shader parameters driven for this mood")]
-        public MaterialParam[] materialParams;
-
-        [Header("Post-Processing (optional)")]
-        public PostFXParams postFX;
-
-        [Header("Timing")]
-        [Range(0.05f, 6f)] public float defaultFadeSeconds = 1.2f;
+        EnsureVolume();
+        CacheOverrides();
+        if (!Application.isPlaying)
+            ApplyMoodInstant(InitialMood);
     }
 
-    // -------- Inspector --------
-    [Header("Lighting Control")]
-    [Tooltip("If true, we auto-collect all scene lights that are Realtime or Mixed and control them. If false, only the 'controlledLights' list is used.")]
-    public bool autoCollectLights = true;
-
-    [Tooltip("Optional manual list. If Auto Collect is ON, these are added on top (and de-duplicated).")]
-    public List<Light> controlledLights = new List<Light>();
-
-    [Tooltip("Affect these Unity Light types when auto-collecting.")]
-    public bool affectDirectional = true;
-    public bool affectPoint = true;
-    public bool affectSpot = true;
-    public bool affectArea = false; // (URP doesn't render built-in Area lights; keep off by default)
-
-    [Tooltip("Ignore baked-only lights. Recommended ON for environment kits with baked lighting.")]
-    public bool ignoreBakedLights = true;
-
-    [Header("Scene References")]
-    [Tooltip("Global Volume used for URP post-processing. Optional.")]
-    public Volume globalVolume;
-
-    [Header("Fade")]
-    public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
-    [Header("Moods")]
-    public Mood[] moods;
-    public MoodId initialMood = MoodId.Happiness;
-
-    [Header("Quick Toggles (tick to apply)")]
-    public bool toggleHappiness;
-    public bool toggleSadness;
-    public bool toggleNostalgic;
-    public bool toggleFurious;
-    public bool toggleTriggered;
-    public bool togglePity;
-    public bool toggleJoyful;
-
-    // -------- Runtime --------
-    Mood _current;
-    Coroutine _fadeCo;
-
-    // ----- Internal lighting state -----
-    class LightEntry
+    private void Reset()
     {
-        public Light light;
-        public Color baseColor;
-        public float baseIntensity;
-        public float baseTemperature;
-        public bool usesTemp;
-    }
-    readonly List<LightEntry> _lightEntries = new List<LightEntry>();
-
-    // Cached post fx start values during fade
-    struct PostFXStart
-    {
-        public float exposure, saturation, contrast;
-        public Color colorFilter;
-        public float bloomIntensity, bloomThreshold;
-        public float vignetteIntensity, vignetteSmoothness;
-        public bool hasCA, hasBloom, hasVignette;
-    }
-
-    void Awake()
-    {
-        CachePropIds();
-        RefreshLightEntries(); // <-- new
-    }
-
-    void Start()
-    {
-        SetImmediate(initialMood);
-    }
-
-    // -------- Utilities to collect lights --------
-    [ContextMenu("Refresh Light Entries (Auto Collect)")]
-    public void RefreshLightEntries()
-    {
-        _lightEntries.Clear();
-
-        HashSet<Light> set = new HashSet<Light>();
-        if (autoCollectLights)
+        // Neutral baseline
+        Neutral = new MoodPreset
         {
-            var all = FindObjectsByType<Light>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            foreach (var l in all)
-            {
-                if (!l) continue;
-                if (ignoreBakedLights && l.lightmapBakeType == LightmapBakeType.Baked) continue;
-                if ((!affectDirectional && l.type == LightType.Directional) ||
-                    (!affectPoint && l.type == LightType.Point) ||
-                    (!affectSpot && l.type == LightType.Spot) ||
-                    (!affectArea && l.type == LightType.Area))
-                    continue;
-                set.Add(l);
-            }
+            exposure = 0f,
+            contrast = 0f,
+            saturation = 0f,
+            colorFilter = Color.white,
+            vignetteIntensity = 0.1f,
+            vignetteSmoothness = 0.25f,
+            bloomIntensity = 0.3f,
+            lift = new Color(0f, 0f, 0f, 0f),
+            gamma = new Color(0f, 0f, 0f, 0f),
+            gain = new Color(0f, 0f, 0f, 0f)
+        };
+
+        // Bright and warm
+        Happiness = Neutral;
+        Happiness.saturation = 20f;
+        Happiness.exposure = 0.2f;
+        Happiness.bloomIntensity = 0.6f;
+        Happiness.colorFilter = new Color(1.05f, 1.02f, 0.95f, 1f);
+
+        // Cool and muted
+        Sadness = Neutral;
+        Sadness.saturation = -30f;
+        Sadness.exposure = -0.2f;
+        Sadness.vignetteIntensity = 0.22f;
+        Sadness.colorFilter = new Color(0.85f, 0.9f, 1.05f, 1f);
+
+        // Slightly faded, nostalgic warmth
+        Nostalgic = Neutral;
+        Nostalgic.saturation = -10f;
+        Nostalgic.contrast = -10f;
+        Nostalgic.colorFilter = new Color(1.02f, 0.98f, 0.9f, 1f);
+
+        // Passionate, high energy
+        Furious = Neutral;
+        Furious.contrast = 25f;
+        Furious.saturation = 10f;
+        Furious.colorFilter = new Color(1.07f, 0.92f, 0.9f, 1f);
+        Furious.vignetteIntensity = 0.28f;
+
+        // Subtle anxious/triggered tone — slightly sharper, cooler, tighter
+        Triggered = Neutral;
+        Triggered.contrast = 30f;              // slightly higher contrast
+        Triggered.saturation = -25f;           // lightly desaturated
+        Triggered.exposure = -0.25f;           // touch darker
+        Triggered.vignetteIntensity = 0.30f;   // subtle tunnel vision
+        Triggered.bloomIntensity = 0.2f;       // less bloom, less warmth
+        Triggered.colorFilter = new Color(0.92f, 0.96f, 1.05f, 1f); // soft cool tint
+        Triggered.lift = new Color(-0.02f, -0.02f, -0.02f, 0f);
+        Triggered.gamma = new Color(0.01f, 0.01f, 0.01f, 0f);
+        Triggered.gain = new Color(0f, 0f, 0f, 0f);
+    }
+
+    private void OnValidate()
+    {
+        if (targetVolume == null || colorAdj == null)
+        {
+            EnsureVolume();
+            CacheOverrides();
         }
-        // include manual list
-        foreach (var l in controlledLights) if (l) set.Add(l);
+        if (!Application.isPlaying && targetVolume != null)
+            ApplyMoodInstant(InitialMood);
+    }
 
-        foreach (var l in set)
+    // ---------- Public API ----------
+    public MoodId SelectedMood => _selectedMood;
+    public void SetSelectedMood(MoodId mood) => _selectedMood = mood;
+    public void ApplySelectedMoodInstant() => ApplyMoodInstant(_selectedMood);
+
+    public void ApplyMoodInstant(MoodId mood)
+    {
+        StopAllBlends();
+        var basePreset = Neutral;
+        var target = GetPreset(mood);
+        SetMoodValues(basePreset, target, 1f);
+    }
+
+    public void CrossfadeTo(MoodId mood, float duration = 1f)
+    {
+        StopAllBlends();
+        blendRoutine = StartCoroutine(BlendToMood(mood, Mathf.Max(0.0001f, duration)));
+    }
+
+    public void forceInstantApply() => ApplySelectedMoodInstant();
+    public void forceInstantApply(MoodId mood) => ApplyMoodInstant(mood);
+
+    // ---------- Internals ----------
+    private void EnsureVolume()
+    {
+        if (targetVolume != null) return;
+
+        var found = FindFirstObjectByType<Volume>();
+        if (found != null) targetVolume = found;
+
+        if (targetVolume == null)
         {
-            _lightEntries.Add(new LightEntry
-            {
-                light = l,
-                baseColor = l.color,
-                baseIntensity = l.intensity,
-                baseTemperature = l.colorTemperature,
-                usesTemp = l.useColorTemperature
-            });
-        }
-    }
+            Transform parent = transform;
+            var centerEye = GameObject.Find("CenterEyeAnchor");
+            if (centerEye != null) parent = centerEye.transform;
 
-    void CachePropIds()
-    {
-        if (moods == null) return;
-        foreach (var mood in moods)
-        {
-            if (mood?.materialParams == null) continue;
-            foreach (var mp in mood.materialParams)
-                if (mp != null && !string.IsNullOrEmpty(mp.propertyName))
-                    mp.propId = Shader.PropertyToID(mp.propertyName);
-        }
-    }
-
-    // -------- Quick Toggle Handling in Inspector --------
-    void OnValidate()
-    {
-        CachePropIds();
-
-        if (toggleHappiness) { FireToggle(MoodId.Happiness); toggleHappiness = false; }
-        if (toggleSadness) { FireToggle(MoodId.Sadness); toggleSadness = false; }
-        if (toggleNostalgic) { FireToggle(MoodId.Nostalgic); toggleNostalgic = false; }
-        if (toggleFurious) { FireToggle(MoodId.Furious); toggleFurious = false; }
-        if (toggleTriggered) { FireToggle(MoodId.Triggered); toggleTriggered = false; }
-        if (togglePity) { FireToggle(MoodId.Pity); togglePity = false; }
-        if (toggleJoyful) { FireToggle(MoodId.Joyful); toggleJoyful = false; }
-    }
-
-    void FireToggle(MoodId id)
-    {
-        if (Application.isPlaying) CrossfadeTo(id);
-        else SetImmediate(id);
-    }
-
-    // -------- Public API (ENUM) --------
-    public void SetImmediate(MoodId id)
-    {
-        var m = FindMood(id);
-        if (m == null) return;
-
-        ApplyLightImmediate(m);
-        ApplyMaterialsImmediate(m);
-        ApplyPostFXImmediate(m);
-        _current = m;
-    }
-
-    public void CrossfadeTo(MoodId id, float seconds = -1f)
-    {
-        var target = FindMood(id);
-        if (target == null || target == _current) return;
-
-        float dur = (seconds > 0f) ? seconds : Mathf.Max(0.05f, target.defaultFadeSeconds);
-        if (_fadeCo != null) StopCoroutine(_fadeCo);
-        _fadeCo = StartCoroutine(FadeRoutine(_current, target, dur));
-        _current = target;
-    }
-
-    // -------- Public API (STRING overloads) --------
-    public void SetImmediate(string id) => SetImmediate(ParseMoodId(id));
-    public void CrossfadeTo(string id, float seconds = -1f) => CrossfadeTo(ParseMoodId(id), seconds);
-
-    static MoodId ParseMoodId(string s)
-    {
-        if (string.IsNullOrWhiteSpace(s)) return MoodId.Happiness;
-        s = s.Trim().ToLowerInvariant();
-        switch (s)
-        {
-            case "happy":
-            case "happiness": return MoodId.Happiness;
-            case "sad":
-            case "sadness":
-            case "saddness": return MoodId.Sadness;
-            case "nostalgic":
-            case "nostalgia": return MoodId.Nostalgic;
-            case "furious":
-            case "anger":
-            case "angry": return MoodId.Furious;
-            case "triggered":
-            case "anxious":
-            case "anxiety": return MoodId.Triggered;
-            case "pity":
-            case "compassion": return MoodId.Pity;
-            case "joy":
-            case "joyful": return MoodId.Joyful;
-            default: return MoodId.Happiness;
-        }
-    }
-
-    // -------- Internals --------
-    IEnumerator FadeRoutine(Mood from, Mood to, float dur)
-    {
-        // Lighting starts captured from baselines at Awake (per lamp)
-        // We'll lerp relative multipliers / blends here.
-
-        // Material starts (read current from 'to' targets)
-        var toList = to?.materialParams;
-        int count = (toList != null) ? toList.Length : 0;
-        float[] startFloats = new float[count];
-        Color[] startColors = new Color[count];
-
-        for (int i = 0; i < count; i++)
-        {
-            var tp = toList[i];
-            if (tp == null || tp.material == null || tp.propId == -1) continue;
-
-            if (tp.type == ParamType.Float)
-                startFloats[i] = tp.material.HasProperty(tp.propId) ? tp.material.GetFloat(tp.propId) : 0f;
-            else
-                startColors[i] = tp.material.HasProperty(tp.propId) ? tp.material.GetColor(tp.propId) : Color.black;
+            var go = new GameObject("Global Volume");
+            go.transform.SetParent(parent, false);
+            targetVolume = go.AddComponent<Volume>();
+            targetVolume.isGlobal = true;
+            targetVolume.profile = ScriptableObject.CreateInstance<VolumeProfile>();
         }
 
-        // PostFX starts
-        PostFXStart p0 = CapturePostFXStart();
+        if (targetVolume.profile == null)
+            targetVolume.profile = ScriptableObject.CreateInstance<VolumeProfile>();
+    }
 
+    private void CacheOverrides()
+    {
+        if (targetVolume == null || targetVolume.profile == null) return;
+
+        if (!targetVolume.profile.TryGet(out colorAdj))
+            colorAdj = targetVolume.profile.Add<ColorAdjustments>(true);
+        if (!targetVolume.profile.TryGet(out vignette))
+            vignette = targetVolume.profile.Add<Vignette>(true);
+        if (!targetVolume.profile.TryGet(out bloom))
+            bloom = targetVolume.profile.Add<Bloom>(true);
+        if (!targetVolume.profile.TryGet(out liftGammaGain))
+            liftGammaGain = targetVolume.profile.Add<LiftGammaGain>(true);
+
+        colorAdj.postExposure.overrideState = true;
+        colorAdj.contrast.overrideState = true;
+        colorAdj.saturation.overrideState = true;
+        colorAdj.colorFilter.overrideState = true;
+        vignette.intensity.overrideState = true;
+        vignette.smoothness.overrideState = true;
+        bloom.intensity.overrideState = true;
+        liftGammaGain.lift.overrideState = true;
+        liftGammaGain.gamma.overrideState = true;
+        liftGammaGain.gain.overrideState = true;
+    }
+
+    private IEnumerator BlendToMood(MoodId mood, float duration)
+    {
+        var basePreset = Neutral;
+        var target = GetPreset(mood);
         float t = 0f;
-        while (t < dur)
+        while (t < 1f)
         {
-            t += Time.deltaTime;
-            float k = fadeCurve.Evaluate(Mathf.Clamp01(t / dur));
-
-            // Lights: apply relative to baseline for every lamp
-            ApplyLightLerped(to, k);
-
-            // Materials
-            for (int i = 0; i < count; i++)
-            {
-                var tp = toList[i];
-                if (tp == null || tp.material == null || tp.propId == -1) continue;
-
-                if (tp.type == ParamType.Float)
-                {
-                    float v = Mathf.Lerp(startFloats[i], tp.floatValue, k);
-                    tp.material.SetFloat(tp.propId, v);
-                }
-                else
-                {
-                    Color v = Color.Lerp(startColors[i], tp.colorValue, k);
-                    tp.material.SetColor(tp.propId, v);
-                }
-            }
-
-            // PostFX
-            LerpPostFX(p0, to.postFX, k);
-
+            SetMoodValues(basePreset, target, t);
+            t += (Application.isPlaying ? Time.deltaTime : 0.016f) / duration;
             yield return null;
         }
-
-        // Snap to final
-        ApplyLightImmediate(to);
-        ApplyMaterialsImmediate(to);
-        ApplyPostFXImmediate(to);
+        SetMoodValues(basePreset, target, 1f);
     }
 
-    // ---------- Lighting application (multi-lamp, relative) ----------
-    void ApplyLightLerped(Mood target, float k)
+    private void StopAllBlends()
     {
-        if (_lightEntries.Count == 0 || target == null) return;
+        if (blendRoutine != null)
+            StopCoroutine(blendRoutine);
+        blendRoutine = null;
+    }
 
-        float cBlend = target.lightColorBlend * k; // ease color blend by k
-        float iMul = Mathf.Lerp(1f, target.lightIntensityMul, k);
-        float tBlend = target.lightTemperatureBlend * k;
+    private void SetMoodValues(MoodPreset neutral, MoodPreset target, float weight01)
+    {
+        float w = Mathf.Clamp01(weight01) * Mathf.Clamp01(MasterIntensity);
 
-        foreach (var e in _lightEntries)
+        if (colorAdj != null)
         {
-            if (!e.light) continue;
-
-            // Intensity: base * multiplier
-            e.light.intensity = e.baseIntensity * iMul;
-
-            // Color: blend from base color towards target tint
-            var tinted = Color.Lerp(e.baseColor, target.lightColor, cBlend);
-            e.light.color = tinted;
-
-            // Temperature: blend if used
-            if (e.usesTemp && tBlend > 0f)
-                e.light.colorTemperature = Mathf.Lerp(e.baseTemperature, target.lightTemperature, tBlend);
+            colorAdj.postExposure.value = Mathf.Lerp(neutral.exposure, target.exposure, w);
+            colorAdj.contrast.value = Mathf.Lerp(neutral.contrast, target.contrast, w);
+            colorAdj.saturation.value = Mathf.Lerp(neutral.saturation, target.saturation, w);
+            colorAdj.colorFilter.value = Color.Lerp(neutral.colorFilter, target.colorFilter, w);
         }
-    }
 
-    void ApplyLightImmediate(Mood m)
-    {
-        if (_lightEntries.Count == 0 || m == null) return;
-
-        foreach (var e in _lightEntries)
+        if (vignette != null)
         {
-            if (!e.light) continue;
+            vignette.intensity.value = Mathf.Lerp(neutral.vignetteIntensity, target.vignetteIntensity, w);
+            vignette.smoothness.value = Mathf.Lerp(neutral.vignetteSmoothness, target.vignetteSmoothness, w);
+        }
 
-            e.light.intensity = e.baseIntensity * m.lightIntensityMul;
+        if (bloom != null)
+        {
+            bloom.intensity.value = Mathf.Lerp(neutral.bloomIntensity, target.bloomIntensity, w);
+        }
 
-            var tinted = Color.Lerp(e.baseColor, m.lightColor, m.lightColorBlend);
-            e.light.color = tinted;
-
-            if (e.usesTemp && m.lightTemperatureBlend > 0f)
-                e.light.colorTemperature = Mathf.Lerp(e.baseTemperature, m.lightTemperature, m.lightTemperatureBlend);
+        if (liftGammaGain != null)
+        {
+            liftGammaGain.lift.value = Color.Lerp(neutral.lift, target.lift, w);
+            liftGammaGain.gamma.value = Color.Lerp(neutral.gamma, target.gamma, w);
+            liftGammaGain.gain.value = Color.Lerp(neutral.gain, target.gain, w);
         }
     }
 
-    void ApplyMaterialsImmediate(Mood m)
+    private MoodPreset GetPreset(MoodId mood)
     {
-        if (m?.materialParams == null) return;
-        foreach (var tp in m.materialParams)
+        switch (mood)
         {
-            if (tp == null || tp.material == null) continue;
-            if (tp.propId == -1 && !string.IsNullOrEmpty(tp.propertyName))
-                tp.propId = Shader.PropertyToID(tp.propertyName);
-
-            if (tp.propId == -1 || !tp.material.HasProperty(tp.propId)) continue;
-
-            if (tp.type == ParamType.Float) tp.material.SetFloat(tp.propId, tp.floatValue);
-            else tp.material.SetColor(tp.propId, tp.colorValue);
+            case MoodId.Happiness: return Happiness;
+            case MoodId.Sadness: return Sadness;
+            case MoodId.Nostalgic: return Nostalgic;
+            case MoodId.Furious: return Furious;
+            case MoodId.Triggered: return Triggered;
+            default: return Neutral;
         }
-    }
-
-    // -------- PostFX helpers (URP) --------
-    PostFXStart CapturePostFXStart()
-    {
-        PostFXStart s = new PostFXStart();
-        if (!globalVolume || !globalVolume.profile) return s;
-
-        if (globalVolume.profile.TryGet(out ColorAdjustments ca))
-        {
-            s.hasCA = true;
-            s.exposure = ca.postExposure.value;
-            s.saturation = ca.saturation.value;
-            s.contrast = ca.contrast.value;
-            s.colorFilter = ca.colorFilter.value;
-        }
-
-        if (globalVolume.profile.TryGet(out Bloom bloom))
-        {
-            s.hasBloom = true;
-            s.bloomIntensity = bloom.intensity.value;
-            s.bloomThreshold = bloom.threshold.value;
-        }
-
-        if (globalVolume.profile.TryGet(out Vignette vig))
-        {
-            s.hasVignette = true;
-            s.vignetteIntensity = vig.intensity.value;
-            s.vignetteSmoothness = vig.smoothness.value;
-        }
-
-        return s;
-    }
-
-    void LerpPostFX(PostFXStart s, PostFXParams target, float k)
-    {
-        if (!globalVolume || !globalVolume.profile || target == null || !target.usePostFX) return;
-
-        if (globalVolume.profile.TryGet(out ColorAdjustments ca) && s.hasCA)
-        {
-            ca.postExposure.overrideState = true;
-            ca.saturation.overrideState = true;
-            ca.contrast.overrideState = true;
-            ca.colorFilter.overrideState = true;
-
-            ca.postExposure.value = Mathf.Lerp(s.exposure, target.postExposure, k);
-            ca.saturation.value = Mathf.Lerp(s.saturation, target.saturation, k);
-            ca.contrast.value = Mathf.Lerp(s.contrast, target.contrast, k);
-            ca.colorFilter.value = Color.Lerp(s.colorFilter, target.colorFilter, k);
-        }
-
-        if (globalVolume.profile.TryGet(out Bloom bloom) && s.hasBloom)
-        {
-            bloom.intensity.overrideState = true;
-            bloom.threshold.overrideState = true;
-
-            bloom.intensity.value = Mathf.Lerp(s.bloomIntensity, target.bloomIntensity, k);
-            bloom.threshold.value = Mathf.Lerp(s.bloomThreshold, target.bloomThreshold, k);
-        }
-
-        if (globalVolume.profile.TryGet(out Vignette vig) && s.hasVignette)
-        {
-            vig.intensity.overrideState = true;
-            vig.smoothness.overrideState = true;
-
-            vig.intensity.value = Mathf.Lerp(s.vignetteIntensity, target.vignetteIntensity, k);
-            vig.smoothness.value = Mathf.Lerp(s.vignetteSmoothness, target.vignetteSmoothness, k);
-        }
-    }
-
-    void ApplyPostFXImmediate(Mood m)
-    {
-        if (!globalVolume || !globalVolume.profile || m.postFX == null || !m.postFX.usePostFX) return;
-
-        if (globalVolume.profile.TryGet(out ColorAdjustments ca))
-        {
-            ca.postExposure.overrideState = true;
-            ca.saturation.overrideState = true;
-            ca.contrast.overrideState = true;
-            ca.colorFilter.overrideState = true;
-
-            ca.postExposure.value = m.postFX.postExposure;
-            ca.saturation.value = m.postFX.saturation;
-            ca.contrast.value = m.postFX.contrast;
-            ca.colorFilter.value = m.postFX.colorFilter;
-        }
-
-        if (globalVolume.profile.TryGet(out Bloom bloom))
-        {
-            bloom.intensity.overrideState = true;
-            bloom.threshold.overrideState = true;
-
-            bloom.intensity.value = m.postFX.bloomIntensity;
-            bloom.threshold.value = m.postFX.bloomThreshold;
-        }
-
-        if (globalVolume.profile.TryGet(out Vignette vig))
-        {
-            vig.intensity.overrideState = true;
-            vig.smoothness.overrideState = true;
-
-            vig.intensity.value = m.postFX.vignetteIntensity;
-            vig.smoothness.value = m.postFX.vignetteSmoothness;
-        }
-    }
-
-    Mood FindMood(MoodId id) => Array.Find(moods, x => x != null && x.id == id);
-
-    // -------- Utilities --------
-    [ContextMenu("Seed Seven Default Mood Packages")]
-    void SeedDefaults()
-    {
-        // Helpers just for seeding (scoped here)
-        MaterialParam FP(string prop, float v) => new MaterialParam
-        {
-            propertyName = prop,
-            type = ParamType.Float,
-            floatValue = v
-        };
-        MaterialParam CP(string prop, Color c) => new MaterialParam
-        {
-            propertyName = prop,
-            type = ParamType.Color,
-            colorValue = c
-        };
-        Color HEX(string hex)
-        {
-            if (ColorUtility.TryParseHtmlString(hex, out var col)) return col;
-            return Color.white;
-        }
-
-        // ---- Mood tints (also used for _TintColor) ----
-        var T_Happy = HEX("#FFD9E6"); // soft pink-rose
-        var T_Sad = HEX("#8BB4FF");   // cool blue
-        var T_Nost = HEX("#D8BFA2");  // sepia beige
-        var T_Fury = HEX("#FF6A6A");  // hot red
-        var T_Trig = HEX("#FF9EDB");  // punchy pink-magenta
-        var T_Pity = HEX("#CABEFF");  // soft lavender
-        var T_Joy = HEX("#FFC7DA");   // calm pink
-
-        moods = new Mood[]
-        {
-            new Mood {
-                id = MoodId.Happiness,
-                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.95f, 0.85f),
-                lightIntensityMul = 1.10f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
-                defaultFadeSeconds = 1.0f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.20f, saturation = 12f, contrast = 6f, colorFilter = T_Happy, bloomIntensity = 0.55f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Happy), FP("_TintStrength",0.35f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
-            },
-            new Mood {
-                id = MoodId.Sadness,
-                lightColorBlend = 0.6f, lightColor = new Color(0.75f, 0.85f, 1.00f),
-                lightIntensityMul = 0.70f, lightTemperatureBlend = 0.3f, lightTemperature = 6500f,
-                defaultFadeSeconds = 1.2f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = -0.10f, saturation = -18f, contrast = -4f, colorFilter = T_Sad, bloomIntensity = 0.20f, bloomThreshold = 1.20f, vignetteIntensity = 0.30f, vignetteSmoothness = 0.48f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Sad), FP("_TintStrength",0.45f), FP("_Desaturate",0.25f), FP("_LensWarp",0.02f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.10f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Nostalgic,
-                lightColorBlend = 0.65f, lightColor = new Color(1.00f, 0.90f, 0.75f),
-                lightIntensityMul = 0.90f, lightTemperatureBlend = 0.5f, lightTemperature = 5200f,
-                defaultFadeSeconds = 1.4f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.05f, saturation = -10f, contrast = 5f, colorFilter = T_Nost, bloomIntensity = 0.35f, bloomThreshold = 1.10f, vignetteIntensity = 0.20f, vignetteSmoothness = 0.38f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Nost), FP("_TintStrength",0.50f), FP("_Desaturate",0.15f), FP("_Dither",0.10f), FP("_FilmFlicker",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.00f), FP("_Glitch",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.08f) }
-            },
-            new Mood {
-                id = MoodId.Furious,
-                lightColorBlend = 0.85f, lightColor = new Color(1.00f, 0.55f, 0.45f),
-                lightIntensityMul = 1.20f, lightTemperatureBlend = 0.6f, lightTemperature = 5000f,
-                defaultFadeSeconds = 0.6f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.25f, saturation = 10f, contrast = 14f, colorFilter = T_Fury, bloomIntensity = 0.15f, bloomThreshold = 1.30f, vignetteIntensity = 0.40f, vignetteSmoothness = 0.52f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Fury), FP("_TintStrength",0.55f), FP("_Desaturate",0.00f), FP("_LensWarp",0.08f), FP("_ColorSplit",0.10f), FP("_Glitch",0.20f), FP("_ScanlineJitter",0.12f), FP("_TimeWarp",0.06f), FP("_VignetteBoost",0.15f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Triggered,
-                lightColorBlend = 0.75f, lightColor = new Color(0.90f, 0.80f, 1.00f),
-                lightIntensityMul = 0.95f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
-                defaultFadeSeconds = 0.8f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.00f, saturation = -5f, contrast = 10f, colorFilter = T_Trig, bloomIntensity = 0.00f, bloomThreshold = 1.40f, vignetteIntensity = 0.50f, vignetteSmoothness = 0.55f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Trig), FP("_TintStrength",0.60f), FP("_Desaturate",0.05f), FP("_LensWarp",0.15f), FP("_ColorSplit",0.25f), FP("_Glitch",0.14f), FP("_TimeWarp",0.12f), FP("_VignetteBoost",0.20f), FP("_BloomBoost",0.00f) }
-            },
-            new Mood {
-                id = MoodId.Pity,
-                lightColorBlend = 0.6f, lightColor = new Color(0.88f, 0.90f, 1.00f),
-                lightIntensityMul = 0.80f, lightTemperatureBlend = 0.5f, lightTemperature = 6800f,
-                defaultFadeSeconds = 1.1f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = -0.05f, saturation = -12f, contrast = -2f, colorFilter = T_Pity, bloomIntensity = 0.15f, bloomThreshold = 1.25f, vignetteIntensity = 0.22f, vignetteSmoothness = 0.40f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Pity), FP("_TintStrength",0.40f), FP("_Desaturate",0.10f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.06f), FP("_BloomBoost",0.04f) }
-            },
-            new Mood {
-                id = MoodId.Joyful,
-                lightColorBlend = 0.5f, lightColor = new Color(1.00f, 0.98f, 0.90f),
-                lightIntensityMul = 1.15f, lightTemperatureBlend = 0.6f, lightTemperature = 7000f,
-                defaultFadeSeconds = 0.9f,
-                postFX = new PostFXParams { usePostFX = true, postExposure = 0.18f, saturation = 16f, contrast = 8f, colorFilter = T_Joy, bloomIntensity = 0.50f, bloomThreshold = 1.05f, vignetteIntensity = 0.10f, vignetteSmoothness = 0.22f },
-                materialParams = new MaterialParam[] { CP("_TintColor",T_Joy), FP("_TintStrength",0.38f), FP("_Desaturate",0.00f), FP("_LensWarp",0.00f), FP("_ColorSplit",0.03f), FP("_Glitch",0.00f), FP("_TimeWarp",0.00f), FP("_VignetteBoost",0.00f), FP("_BloomBoost",0.10f) }
-            },
-        };
-
-        CachePropIds();
-    }
-
-    [ContextMenu("Copy Materials From First Mood To All")]
-    void CopyMaterialsFromFirstMoodToAll()
-    {
-        if (moods == null || moods.Length == 0 || moods[0]?.materialParams == null) return;
-
-        var first = moods[0].materialParams;
-        for (int m = 1; m < moods.Length; m++)
-        {
-            var mm = moods[m];
-            if (mm == null || mm.materialParams == null) continue;
-
-            for (int i = 0; i < mm.materialParams.Length; i++)
-            {
-                var tp = mm.materialParams[i];
-                if (tp == null || string.IsNullOrEmpty(tp.propertyName)) continue;
-
-                for (int j = 0; j < first.Length; j++)
-                {
-                    var fp = first[j];
-                    if (fp != null && fp.propertyName == tp.propertyName && fp.type == tp.type && fp.material != null)
-                    {
-                        tp.material = fp.material;
-                        break;
-                    }
-                }
-            }
-        }
-        CachePropIds();
-        Debug.Log("MoodFXDirector: Copied materials from first mood to all moods (by property name).");
     }
 }
