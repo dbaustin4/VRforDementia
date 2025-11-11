@@ -71,7 +71,7 @@ public class VRPathMover : MonoBehaviour
     private void Update()
     {
         // Test key
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.T) || OVRInput.GetDown(OVRInput.Button.One))
             StartMovement();
 
         if (!moving) return;
