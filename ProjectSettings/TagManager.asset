@@ -10,6 +10,7 @@ TagManager:
   - RightPalm
   - RightIndex
   - Palm
+  - Hand
   layers:
   - Default
   - TransparentFX

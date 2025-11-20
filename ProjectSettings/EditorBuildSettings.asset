@@ -8,12 +8,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
-    path: Assets/Scenes/Ana Scene.unity
-    guid: 3dd6d709c484141489545d657930c82c
+  - enabled: 1
+    path: Assets/Scenes/Tutorial Scene.unity
+    guid: 81c406930a0e1c04a97f22d691440eff
   - enabled: 1
     path: Assets/Scenes/AutoPath Apartment.unity
     guid: 20b443abeb7ea3c44abde4ace4271aac
+  - enabled: 1
+    path: Assets/Scenes/Ana Scene.unity
+    guid: 3dd6d709c484141489545d657930c82c
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: fd2eeca98edec45468dbe9bbab98b766,
       type: 2}
