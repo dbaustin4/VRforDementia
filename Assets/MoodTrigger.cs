@@ -1,22 +1,30 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class MoodInteractable : MonoBehaviour
+public class MoodTrigger : MonoBehaviour
 {
     [Header("References")]
-    public MoodFXDirector moodFXDirector;                // drag your MoodFXDirector here
+    [Tooltip("Drag your VisualMoodDirector here (the one on the Volume).")]
+    public VisualMoodDirector visualMoodDirector;
 
     [Header("Mood to Activate")]
-    public MoodFXDirector.MoodId moodToActivate;         // dropdown
+    public VisualMoodDirector.MoodId moodToActivate;
 
     [Header("Interaction")]
     public string playerTag = "Player";
-    public bool requireKeyPress = true;                  // E for desktop testing
+    [Tooltip("If false, mood triggers as soon as player enters the trigger.")]
+    public bool requireKeyPress = true;           // E for desktop testing
     public KeyCode interactKey = KeyCode.E;
 
+    [Header("Transition")]
+    [Tooltip("Fade duration when switching moods. Set to 0 for hard cut.")]
+    public float fadeSeconds = 1.5f;
+    [Tooltip("If true, ignore fadeSeconds and apply instantly.")]
+    public bool useInstantApply = false;
+
     [Header("Debug Helpers")]
-    public bool autoTestAfter2s = false;                 // set true once to prove wiring works
+    [Tooltip("If true, auto-activate this mood 2s after Start(), for testing.")]
+    public bool autoTestAfter2s = false;
 
     private bool playerInRange;
 
@@ -29,15 +37,18 @@ public class MoodInteractable : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[MoodInteractable:{name}] Ready. requireKeyPress={requireKeyPress}");
-        if (autoTestAfter2s) Invoke(nameof(ActivateMood), 2f);
+        Debug.Log($"[MoodTrigger:{name}] Ready. requireKeyPress={requireKeyPress}");
+        if (autoTestAfter2s)
+            Invoke(nameof(ActivateMood), 2f);
     }
 
     private void Update()
     {
-        if (requireKeyPress && playerInRange && Input.GetKeyDown(interactKey))
+        if (!requireKeyPress || !playerInRange) return;
+
+        if (Input.GetKeyDown(interactKey))
         {
-            Debug.Log("[MoodInteractable] E pressed -> ActivateMood()");
+            Debug.Log("[MoodTrigger] Key pressed -> ActivateMood()");
             ActivateMood();
         }
     }
@@ -46,25 +57,26 @@ public class MoodInteractable : MonoBehaviour
     {
         if (!other.CompareTag(playerTag)) return;
         playerInRange = true;
-        Debug.Log("[MoodInteractable] Player entered trigger.");
+        Debug.Log("[MoodTrigger] Player entered trigger.");
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
         playerInRange = false;
-        Debug.Log("[MoodInteractable] Player exited trigger.");
+        Debug.Log("[MoodTrigger] Player exited trigger.");
     }
 
-    // Call this from XR button/UI event to bypass E-key completely.
+    // Call this from XR button / UI event to bypass keyboard completely.
     public void Interact()
     {
         if (!playerInRange)
         {
-            Debug.Log("[MoodInteractable] Interact() ignored (player not in range).");
+            Debug.Log("[MoodTrigger] Interact() ignored (player not in range).");
             return;
         }
-        Debug.Log("[MoodInteractable] Interact() -> ActivateMood()");
+
+        Debug.Log("[MoodTrigger] Interact() -> ActivateMood()");
         ActivateMood();
     }
 
@@ -74,53 +86,21 @@ public class MoodInteractable : MonoBehaviour
     // ------- Apply mood on the director -------
     private void ActivateMood()
     {
-        if (moodFXDirector == null)
+        if (visualMoodDirector == null)
         {
-            Debug.LogWarning("[MoodInteractable] No MoodFXDirector assigned.");
+            Debug.LogWarning("[MoodTrigger] No VisualMoodDirector assigned.");
             return;
         }
 
-        var t = moodFXDirector.GetType();
-        Debug.Log($"[MoodInteractable] Activating '{moodToActivate}' using director type {t.Name}");
-
-        // 1) CrossfadeTo(MoodId)
-        var crossfade = t.GetMethod("CrossfadeTo",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            null, new[] { typeof(MoodFXDirector.MoodId) }, null);
-        if (crossfade != null)
+        if (useInstantApply || fadeSeconds <= 0f)
         {
-            Debug.Log("[MoodInteractable] Found CrossfadeTo(MoodId).");
-            crossfade.Invoke(moodFXDirector, new object[] { moodToActivate });
-            return;
+            visualMoodDirector.forceInstantApply(moodToActivate);
+            Debug.Log($"[MoodTrigger] Instant mood: {moodToActivate}");
         }
-
-        // 2) ApplyMoodInstant(MoodId)
-        var applyInstant = t.GetMethod("ApplyMoodInstant",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            null, new[] { typeof(MoodFXDirector.MoodId) }, null);
-        if (applyInstant != null)
+        else
         {
-            Debug.Log("[MoodInteractable] Found ApplyMoodInstant(MoodId).");
-            applyInstant.Invoke(moodFXDirector, new object[] { moodToActivate });
-            return;
+            visualMoodDirector.CrossfadeTo(moodToActivate, fadeSeconds);
+            Debug.Log($"[MoodTrigger] Crossfade mood: {moodToActivate} over {fadeSeconds:0.00}s");
         }
-
-        // 3) selectedMood + ApplySelectedMoodInstant()
-        var selectedField = t.GetField("selectedMood",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        var applySelected = t.GetMethod("ApplySelectedMoodInstant",
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-            null, System.Type.EmptyTypes, null);
-
-        if (selectedField != null && applySelected != null)
-        {
-            Debug.Log("[MoodInteractable] Using selectedMood + ApplySelectedMoodInstant().");
-            selectedField.SetValue(moodFXDirector, moodToActivate);
-            applySelected.Invoke(moodFXDirector, null);
-            return;
-        }
-
-        Debug.LogWarning("[MoodInteractable] No compatible method found on MoodFXDirector " +
-                         "(expected CrossfadeTo(MoodId), ApplyMoodInstant(MoodId), or selectedMood + ApplySelectedMoodInstant()).");
     }
 }

@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class StoryGameManager : MonoBehaviour
+public class NarrativeDirector : MonoBehaviour
 {
     [Header("Data")]
     public List<Act> acts = new();
@@ -17,8 +17,8 @@ public class StoryGameManager : MonoBehaviour
     public AudioSource voiceSource;
 
     [Header("Mood / Lighting / Audio")]
-    public MoodFXDirector moodFXDirector;   // assign in Inspector
-    public AudioFXDirector audioFXDirector; // NEW: layered audio moods
+    public VisualMoodDirector visualMoodDirector;   // assign in Inspector
+    public AudioMoodDirector audioMoodDirector;    // layered audio moods
 
     // Runtime indices
     int actIndex = 0;
@@ -28,21 +28,22 @@ public class StoryGameManager : MonoBehaviour
     enum StoryState { Idle, Dialogue, Exploration }
     StoryState state = StoryState.Idle;
 
-    // Optional handle to MoodFXDirector.CrossfadeBlend if present
+    // Optional handle to VisualMoodDirector.CrossfadeBlend if present
     MethodInfo _crossfadeBlendMI;
 
     void Awake()
     {
-        if (moodFXDirector != null)
+        if (visualMoodDirector != null)
         {
-            var t = typeof(MoodFXDirector);
+            var t = typeof(VisualMoodDirector);
             _crossfadeBlendMI = t.GetMethod(
                 "CrossfadeBlend",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                 null,
-                new Type[] {
-                    typeof(MoodFXDirector.MoodId),
-                    typeof(MoodFXDirector.MoodId),
+                new Type[]
+                {
+                    typeof(VisualMoodDirector.MoodId),
+                    typeof(VisualMoodDirector.MoodId),
                     typeof(float),
                     typeof(float)
                 },
@@ -57,7 +58,10 @@ public class StoryGameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(debugAdvanceKey)) Advance();
 
-        if (state == StoryState.Dialogue && autoAdvanceOnVoiceEnd && voiceSource != null && !voiceSource.isPlaying)
+        if (state == StoryState.Dialogue &&
+            autoAdvanceOnVoiceEnd &&
+            voiceSource != null &&
+            !voiceSource.isPlaying)
         {
             if (dialogueUI != null && dialogueUI.ReadyForAutoAdvance())
                 Advance();
@@ -71,11 +75,14 @@ public class StoryGameManager : MonoBehaviour
     // ----- Public control -----
     public void StartStory()
     {
-        actIndex = 0; chapterIndex = 0; lineIndex = -1; state = StoryState.Idle;
+        actIndex = 0;
+        chapterIndex = 0;
+        lineIndex = -1;
+        state = StoryState.Idle;
 
         if (acts.Count == 0)
         {
-            Debug.LogWarning("StoryGameManager: No acts assigned.");
+            Debug.LogWarning("NarrativeDirector: No acts assigned.");
             return;
         }
         StartAct(actIndex);
@@ -94,7 +101,7 @@ public class StoryGameManager : MonoBehaviour
 
         var ch = CurrentChapter();
 
-        if ((moodFXDirector || audioFXDirector) && ch != null)
+        if ((visualMoodDirector || audioMoodDirector) && ch != null)
             PlayCue(ch.onCompleteCue);
 
         ch?.onChapterEnd?.Invoke();
@@ -111,7 +118,8 @@ public class StoryGameManager : MonoBehaviour
             dialogueUI?.Hide();
             return;
         }
-        chapterIndex = 0; lineIndex = -1;
+        chapterIndex = 0;
+        lineIndex = -1;
         Debug.Log($"Starting Act: {acts[index].actName}");
         StartChapter(chapterIndex);
     }
@@ -119,24 +127,30 @@ public class StoryGameManager : MonoBehaviour
     void StartChapter(int index)
     {
         var ch = CurrentChapter();
-        if (ch == null) { GoToNextAct(); return; }
+        if (ch == null)
+        {
+            GoToNextAct();
+            return;
+        }
 
         // Cue: On Enter
-        if (moodFXDirector || audioFXDirector)
+        if (visualMoodDirector || audioMoodDirector)
             PlayCue(ch.onEnterCue);
 
         ch.onChapterStart?.Invoke();
 
         if (ch.dialogue != null && ch.dialogue.Count > 0)
         {
-            state = StoryState.Dialogue; lineIndex = -1; NextLine();
+            state = StoryState.Dialogue;
+            lineIndex = -1;
+            NextLine();
         }
         else
         {
             if (ch.requiresExploration) EnterExploration(ch);
             else
             {
-                if (moodFXDirector || audioFXDirector)
+                if (visualMoodDirector || audioMoodDirector)
                     PlayCue(ch.onCompleteCue);
 
                 ch.onChapterEnd?.Invoke();
@@ -147,7 +161,8 @@ public class StoryGameManager : MonoBehaviour
 
     void NextLine()
     {
-        var ch = CurrentChapter(); if (ch == null) return;
+        var ch = CurrentChapter();
+        if (ch == null) return;
 
         lineIndex++;
         if (lineIndex >= ch.dialogue.Count)
@@ -156,13 +171,13 @@ public class StoryGameManager : MonoBehaviour
             if (voiceSource != null && voiceSource.isPlaying) voiceSource.Stop();
 
             // Cue: After Dialogue
-            if (moodFXDirector || audioFXDirector)
+            if (visualMoodDirector || audioMoodDirector)
                 PlayCue(ch.afterDialogueCue);
 
             if (ch.requiresExploration) EnterExploration(ch);
             else
             {
-                if (moodFXDirector || audioFXDirector)
+                if (visualMoodDirector || audioMoodDirector)
                     PlayCue(ch.onCompleteCue);
 
                 ch.onChapterEnd?.Invoke();
@@ -192,7 +207,7 @@ public class StoryGameManager : MonoBehaviour
         Debug.Log($"Exploration started for Chapter: {ch.chapterName}. Wait for objective completion.");
 
         // Cue: On Exploration Start
-        if (moodFXDirector || audioFXDirector)
+        if (visualMoodDirector || audioMoodDirector)
             PlayCue(ch.onExplorationStartCue);
 
         if (!string.IsNullOrWhiteSpace(ch.explorationHint))
@@ -211,7 +226,12 @@ public class StoryGameManager : MonoBehaviour
     {
         actIndex++;
         if (actIndex < acts.Count) StartAct(actIndex);
-        else { Debug.Log("All acts finished."); state = StoryState.Idle; dialogueUI?.Hide(); }
+        else
+        {
+            Debug.Log("All acts finished.");
+            state = StoryState.Idle;
+            dialogueUI?.Hide();
+        }
     }
 
     // ----- Helpers -----
@@ -219,7 +239,8 @@ public class StoryGameManager : MonoBehaviour
 
     Chapter CurrentChapter()
     {
-        var act = CurrentAct(); if (act == null) return null;
+        var act = CurrentAct();
+        if (act == null) return null;
         return (chapterIndex < 0 || chapterIndex >= act.chapters.Count) ? null : act.chapters[chapterIndex];
     }
 
@@ -227,17 +248,17 @@ public class StoryGameManager : MonoBehaviour
     public void PlayCue(MoodProgramCue cue)
     {
         // If neither director exists, nothing to do
-        if ((!moodFXDirector && !audioFXDirector) || cue == null || !cue.apply) return;
+        if ((!visualMoodDirector && !audioMoodDirector) || cue == null || !cue.apply) return;
 
         // 1) Base mood
         if (cue.baseMood.enabled)
         {
-            if (moodFXDirector)
-                moodFXDirector.CrossfadeTo(cue.baseMood.mood, cue.baseMood.fadeSeconds);
+            if (visualMoodDirector)
+                visualMoodDirector.CrossfadeTo(cue.baseMood.mood, cue.baseMood.fadeSeconds);
 
-            if (audioFXDirector)
-                audioFXDirector.CrossfadeTo(
-                    (AudioFXDirector.MoodId)cue.baseMood.mood,
+            if (audioMoodDirector)
+                audioMoodDirector.CrossfadeTo(
+                    (AudioMoodDirector.MoodId)cue.baseMood.mood,
                     cue.baseMood.fadeSeconds
                 );
         }
@@ -247,7 +268,7 @@ public class StoryGameManager : MonoBehaviour
             StartCoroutine(OverlaySequenceRoutine(cue.baseMood.mood, cue.overlays.layers));
     }
 
-    IEnumerator OverlaySequenceRoutine(MoodFXDirector.MoodId baseMood, List<OverlayLayer> layers)
+    IEnumerator OverlaySequenceRoutine(VisualMoodDirector.MoodId baseMood, List<OverlayLayer> layers)
     {
         bool canBlend = (_crossfadeBlendMI != null);
 
@@ -262,17 +283,20 @@ public class StoryGameManager : MonoBehaviour
 
             while (t < dur)
             {
-                float u = Mathf.Clamp01(t / dur);                      // normalized time 0..1
-                float w = Mathf.Clamp01(layer.weightCurve.Evaluate(u)); // overlay weight 0..1
+                float u = Mathf.Clamp01(t / dur);                         // normalized time 0..1
+                float w = Mathf.Clamp01(layer.weightCurve.Evaluate(u));   // overlay weight 0..1
 
                 // VISUALS
-                if (moodFXDirector)
+                if (visualMoodDirector)
                 {
                     if (canBlend)
                     {
-                        // Use the high-fidelity blend if available in MoodFXDirector
+                        // Use the high-fidelity blend if available in VisualMoodDirector
                         float microFade = Mathf.Max(0.02f, layer.microFadeSeconds);
-                        _crossfadeBlendMI.Invoke(moodFXDirector, new object[] { baseMood, layer.overlayMood, w, microFade });
+                        _crossfadeBlendMI.Invoke(
+                            visualMoodDirector,
+                            new object[] { baseMood, layer.overlayMood, w, microFade }
+                        );
                     }
                     else
                     {
@@ -284,18 +308,24 @@ public class StoryGameManager : MonoBehaviour
                         if (w > THRESH && lastW <= THRESH)
                         {
                             // entering overlay zone
-                            moodFXDirector.CrossfadeTo(layer.overlayMood, Mathf.Lerp(0.05f, layer.microFadeSeconds, w));
+                            visualMoodDirector.CrossfadeTo(
+                                layer.overlayMood,
+                                Mathf.Lerp(0.05f, layer.microFadeSeconds, w)
+                            );
                         }
                         else if (w <= THRESH && lastW > THRESH)
                         {
                             // leaving overlay zone
-                            moodFXDirector.CrossfadeTo(baseMood, Mathf.Lerp(0.05f, layer.microFadeSeconds, 1f - w));
+                            visualMoodDirector.CrossfadeTo(
+                                baseMood,
+                                Mathf.Lerp(0.05f, layer.microFadeSeconds, 1f - w)
+                            );
                         }
                     }
                 }
 
                 // AUDIO (simple threshold-based follow of overlay weight)
-                if (audioFXDirector)
+                if (audioMoodDirector)
                 {
                     const float THRESH_AUDIO = 0.05f;
                     if (lastW < 0f) lastW = w;
@@ -303,16 +333,16 @@ public class StoryGameManager : MonoBehaviour
                     if (w > THRESH_AUDIO && lastW <= THRESH_AUDIO)
                     {
                         // entering overlay zone (audio)
-                        audioFXDirector.CrossfadeTo(
-                            (AudioFXDirector.MoodId)layer.overlayMood,
+                        audioMoodDirector.CrossfadeTo(
+                            (AudioMoodDirector.MoodId)layer.overlayMood,
                             Mathf.Lerp(0.05f, layer.microFadeSeconds, w)
                         );
                     }
                     else if (w <= THRESH_AUDIO && lastW > THRESH_AUDIO)
                     {
                         // leaving overlay zone (audio)
-                        audioFXDirector.CrossfadeTo(
-                            (AudioFXDirector.MoodId)baseMood,
+                        audioMoodDirector.CrossfadeTo(
+                            (AudioMoodDirector.MoodId)baseMood,
                             Mathf.Lerp(0.05f, layer.microFadeSeconds, 1f - w)
                         );
                     }
@@ -324,12 +354,12 @@ public class StoryGameManager : MonoBehaviour
             }
 
             // After each overlay, return to base quickly before the next overlay
-            if (moodFXDirector)
-                moodFXDirector.CrossfadeTo(baseMood, Mathf.Max(0.05f, layer.endReturnFadeSeconds));
+            if (visualMoodDirector)
+                visualMoodDirector.CrossfadeTo(baseMood, Mathf.Max(0.05f, layer.endReturnFadeSeconds));
 
-            if (audioFXDirector)
-                audioFXDirector.CrossfadeTo(
-                    (AudioFXDirector.MoodId)baseMood,
+            if (audioMoodDirector)
+                audioMoodDirector.CrossfadeTo(
+                    (AudioMoodDirector.MoodId)baseMood,
                     Mathf.Max(0.05f, layer.endReturnFadeSeconds)
                 );
 
@@ -339,34 +369,37 @@ public class StoryGameManager : MonoBehaviour
     }
 
     // Optional direct helpers if you trigger from Timeline/Ink
-    public void ApplyMood(MoodFXDirector.MoodId mood, float fadeSeconds = 1.0f)
+    public void ApplyMood(VisualMoodDirector.MoodId mood, float fadeSeconds = 1.0f)
     {
-        if (moodFXDirector)
-            moodFXDirector.CrossfadeTo(mood, fadeSeconds);
+        if (visualMoodDirector)
+            visualMoodDirector.CrossfadeTo(mood, fadeSeconds);
 
-        if (audioFXDirector)
-            audioFXDirector.CrossfadeTo(
-                (AudioFXDirector.MoodId)mood,
+        if (audioMoodDirector)
+            audioMoodDirector.CrossfadeTo(
+                (AudioMoodDirector.MoodId)mood,
                 fadeSeconds
             );
     }
 
     public void ApplyMoodBlend(
-        MoodFXDirector.MoodId baseMood,
-        MoodFXDirector.MoodId overlayMood,
+        VisualMoodDirector.MoodId baseMood,
+        VisualMoodDirector.MoodId overlayMood,
         float overlayWeight = 0.5f,
         float fadeSeconds = 0.5f)
     {
-        if (!moodFXDirector && !audioFXDirector) return;
+        if (!visualMoodDirector && !audioMoodDirector) return;
 
         overlayWeight = Mathf.Clamp01(overlayWeight);
 
         // VISUALS: use full blend system if available
-        if (moodFXDirector)
+        if (visualMoodDirector)
         {
             if (_crossfadeBlendMI != null)
             {
-                _crossfadeBlendMI.Invoke(moodFXDirector, new object[] { baseMood, overlayMood, overlayWeight, fadeSeconds });
+                _crossfadeBlendMI.Invoke(
+                    visualMoodDirector,
+                    new object[] { baseMood, overlayMood, overlayWeight, fadeSeconds }
+                );
             }
             else
             {
@@ -375,15 +408,15 @@ public class StoryGameManager : MonoBehaviour
         }
 
         // AUDIO: simple interpretation of overlay weight
-        if (audioFXDirector)
+        if (audioMoodDirector)
         {
             if (overlayWeight <= 0.001f)
             {
-                audioFXDirector.CrossfadeTo((AudioFXDirector.MoodId)baseMood, fadeSeconds);
+                audioMoodDirector.CrossfadeTo((AudioMoodDirector.MoodId)baseMood, fadeSeconds);
             }
             else if (overlayWeight >= 0.999f)
             {
-                audioFXDirector.CrossfadeTo((AudioFXDirector.MoodId)overlayMood, fadeSeconds);
+                audioMoodDirector.CrossfadeTo((AudioMoodDirector.MoodId)overlayMood, fadeSeconds);
             }
             else
             {
@@ -393,36 +426,56 @@ public class StoryGameManager : MonoBehaviour
         }
     }
 
-    IEnumerator BlendFallbackRoutine(MoodFXDirector.MoodId baseMood, MoodFXDirector.MoodId overlayMood, float w, float fade)
+    IEnumerator BlendFallbackRoutine(
+        VisualMoodDirector.MoodId baseMood,
+        VisualMoodDirector.MoodId overlayMood,
+        float w,
+        float fade)
     {
-        if (!moodFXDirector) yield break;
+        if (!visualMoodDirector) yield break;
 
-        moodFXDirector.CrossfadeTo(baseMood, Mathf.Max(0.05f, fade * 0.6f));
+        visualMoodDirector.CrossfadeTo(baseMood, Mathf.Max(0.05f, fade * 0.6f));
         yield return null;
 
         if (w > 0.001f)
         {
             float toOverlay = Mathf.Lerp(0.1f, 0.35f, w);
-            moodFXDirector.CrossfadeTo(overlayMood, Mathf.Max(0.05f, fade * toOverlay));
+            visualMoodDirector.CrossfadeTo(
+                overlayMood,
+                Mathf.Max(0.05f, fade * toOverlay)
+            );
             yield return new WaitForSeconds(Mathf.Max(0.01f, fade * toOverlay));
-            moodFXDirector.CrossfadeTo(baseMood, Mathf.Max(0.05f, fade * (0.4f + (0.2f * (1f - w)))));
+            visualMoodDirector.CrossfadeTo(
+                baseMood,
+                Mathf.Max(0.05f, fade * (0.4f + (0.2f * (1f - w))))
+            );
         }
     }
 
-    IEnumerator AudioBlendRoutine(MoodFXDirector.MoodId baseMood, MoodFXDirector.MoodId overlayMood, float w, float fade)
+    IEnumerator AudioBlendRoutine(
+        VisualMoodDirector.MoodId baseMood,
+        VisualMoodDirector.MoodId overlayMood,
+        float w,
+        float fade)
     {
-        if (!audioFXDirector) yield break;
+        if (!audioMoodDirector) yield break;
 
-        audioFXDirector.CrossfadeTo((AudioFXDirector.MoodId)baseMood, Mathf.Max(0.05f, fade * 0.6f));
+        audioMoodDirector.CrossfadeTo(
+            (AudioMoodDirector.MoodId)baseMood,
+            Mathf.Max(0.05f, fade * 0.6f)
+        );
         yield return null;
 
         if (w > 0.001f)
         {
             float toOverlay = Mathf.Lerp(0.1f, 0.35f, w);
-            audioFXDirector.CrossfadeTo((AudioFXDirector.MoodId)overlayMood, Mathf.Max(0.05f, fade * toOverlay));
+            audioMoodDirector.CrossfadeTo(
+                (AudioMoodDirector.MoodId)overlayMood,
+                Mathf.Max(0.05f, fade * toOverlay)
+            );
             yield return new WaitForSeconds(Mathf.Max(0.01f, fade * toOverlay));
-            audioFXDirector.CrossfadeTo(
-                (AudioFXDirector.MoodId)baseMood,
+            audioMoodDirector.CrossfadeTo(
+                (AudioMoodDirector.MoodId)baseMood,
                 Mathf.Max(0.05f, fade * (0.4f + (0.2f * (1f - w))))
             );
         }
@@ -484,7 +537,7 @@ public class MoodProgramCue
 public class BaseMood
 {
     public bool enabled = true;
-    public MoodFXDirector.MoodId mood = MoodFXDirector.MoodId.Happiness;
+    public VisualMoodDirector.MoodId mood = VisualMoodDirector.MoodId.Happiness;
     [Range(0.05f, 6f)] public float fadeSeconds = 1.2f;
 }
 
@@ -502,7 +555,7 @@ public class OverlayLayer
 {
     [Header("Overlay Layer")]
     public string label = "Overlay";
-    public MoodFXDirector.MoodId overlayMood = MoodFXDirector.MoodId.Sadness;
+    public VisualMoodDirector.MoodId overlayMood = VisualMoodDirector.MoodId.Sadness;
 
     [Tooltip("Total time this overlay layer runs over the base.")]
     [Range(0.1f, 20f)] public float durationSeconds = 3f;
