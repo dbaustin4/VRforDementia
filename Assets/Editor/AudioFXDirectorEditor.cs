@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(AudioFXDirector))]
+[CustomEditor(typeof(AudioMoodDirector))]
 public class AudioFXDirectorEditor : Editor
 {
     public override void OnInspectorGUI()
@@ -10,7 +10,7 @@ public class AudioFXDirectorEditor : Editor
         // Draw the normal inspector first
         DrawDefaultInspector();
 
-        var dir = (AudioFXDirector)target;
+        var dir = (AudioMoodDirector)target;
 
         if (!dir.enableTestingTools)
             return;
@@ -26,7 +26,7 @@ public class AudioFXDirectorEditor : Editor
         );
 
         // Preview mood picker & fade
-        dir.previewMood = (AudioFXDirector.MoodId)EditorGUILayout.EnumPopup("Preview Mood", dir.previewMood);
+        dir.previewMood = (AudioMoodDirector.MoodId)EditorGUILayout.EnumPopup("Preview Mood", dir.previewMood);
         dir.previewFadeSeconds = EditorGUILayout.Slider("Fade Seconds", dir.previewFadeSeconds, 0.1f, 10f);
 
         EditorGUILayout.Space();

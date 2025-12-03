@@ -2,8 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(MoodFXDirector))]
-public class MoodFXDirectorEditor : Editor
+[CustomEditor(typeof(VisualMoodDirector))]
+public class VisualMoodDirectorEditor : Editor
 {
     private SerializedProperty targetVolumeProp;
     private SerializedProperty masterIntensityProp;
@@ -35,7 +35,7 @@ public class MoodFXDirectorEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        var t = (MoodFXDirector)target;
+        var t = (VisualMoodDirector)target;
 
         EditorGUILayout.PropertyField(targetVolumeProp, new GUIContent("Target Volume"));
         EditorGUILayout.Slider(masterIntensityProp, 0f, 1f);
@@ -45,15 +45,15 @@ public class MoodFXDirectorEditor : Editor
         EditorGUILayout.LabelField("Quick Moods", EditorStyles.boldLabel);
         using (new EditorGUILayout.HorizontalScope())
         {
-            DrawMoodButton(t, MoodFXDirector.MoodId.Neutral);
-            DrawMoodButton(t, MoodFXDirector.MoodId.Happiness);
-            DrawMoodButton(t, MoodFXDirector.MoodId.Sadness);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Neutral);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Happiness);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Sadness);
         }
         using (new EditorGUILayout.HorizontalScope())
         {
-            DrawMoodButton(t, MoodFXDirector.MoodId.Nostalgic);
-            DrawMoodButton(t, MoodFXDirector.MoodId.Furious);
-            DrawMoodButton(t, MoodFXDirector.MoodId.Triggered);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Nostalgic);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Furious);
+            DrawMoodButton(t, VisualMoodDirector.MoodId.Triggered);
         }
 
         EditorGUILayout.Space(4);
@@ -79,7 +79,7 @@ public class MoodFXDirectorEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void DrawMoodButton(MoodFXDirector dir, MoodFXDirector.MoodId mood)
+    private void DrawMoodButton(VisualMoodDirector dir, VisualMoodDirector.MoodId mood)
     {
         if (GUILayout.Button(mood.ToString(), GUILayout.Height(22)))
         {
