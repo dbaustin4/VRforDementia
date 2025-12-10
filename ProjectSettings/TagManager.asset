@@ -11,6 +11,7 @@ TagManager:
   - RightIndex
   - Palm
   - Hand
+  - Sugar
   layers:
   - Default
   - TransparentFX

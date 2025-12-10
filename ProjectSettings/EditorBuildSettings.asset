@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Tutorial Scene.unity
     guid: 81c406930a0e1c04a97f22d691440eff
   - enabled: 1
-    path: Assets/Scenes/JoanasTest/EnvironmentTest2.unity
+    path: Assets/Scenes/Experience Scene.unity
     guid: e53774f0bd8483141b021744322219c0
   - enabled: 1
     path: Assets/Scenes/AutoPath Apartment.unity

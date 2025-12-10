@@ -39,11 +39,6 @@ public class VRPathMover : MonoBehaviour
     [Tooltip("Seconds to ease-in/out the sway motion at start and end")]
     public float swayEaseTime = 0.83f;
 
-    [Header("Carry Object Requirement (Track 4 Using Tags)")]
-    public string requiredTag = "Sugar";
-    private bool mustHoldObjectActive = false;
-    private bool isHoldingObject = false;
-
     private int currentPathIndex = -1;
     private CinemachineDollyCart activeCart;
 
@@ -53,10 +48,44 @@ public class VRPathMover : MonoBehaviour
     private Quaternion lockedRotation;
     private Vector3 initialSwayLocalPos;
 
+    private bool HasSugarInHand()
+    {
+        var grabbers = FindObjectsOfType<OVRGrabber>();
+
+        foreach (var g in grabbers)
+        {
+            Debug.Log("Checking hand: " + g.name +
+                      " | Object: " + (g.grabbedObject ? g.grabbedObject.name : "None"));
+
+            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar"))
+            {
+                Debug.Log("Sugar FOUND!");
+                return true;
+            }
+        }
+
+        Debug.Log("Sugar NOT found.");
+        return false;
+    }
+
+
+    /*private bool HasSugarInHand() {
+
+        var grabbers = FindObjectsOfType<OVRGrabber>();
+
+        foreach (var g in grabbers) {
+            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar")) {
+                return true;
+            }
+        }
+        return false;
+    }*/
+
     //Handling Camera Jumping
 
     private void Start()
     {
+        Debug.Log("VRPathMover started. Current path index = " + currentPathIndex);
         if (dollyCarts == null || dollyCarts.Length == 0)
         {
             Debug.LogError("[VRPathMoverHumanized] DollyCart not assigned!");
@@ -83,6 +112,11 @@ public class VRPathMover : MonoBehaviour
 
         if (!moving) return;
 
+        if (currentPathIndex == 3 && HasSugarInHand())
+        {
+            return;
+        }
+
         elapsedTime += Time.deltaTime;
         float t = Mathf.Clamp01(elapsedTime / Mathf.Max(duration, 0.01f));
         float eased = easeCurve.Evaluate(t);
@@ -107,6 +141,17 @@ public class VRPathMover : MonoBehaviour
 
     public void StartNextPath()
     {
+        Debug.Log("StartNextPath() called. Current index BEFORE increment = " + currentPathIndex);
+
+        if (currentPathIndex + 1 == 3)
+        {
+            if (!HasSugarInHand())
+            {
+                Debug.Log("Player does not have sugar, cannot proceed to path 3");
+                return;
+            }
+        }
+
         currentPathIndex++;
 
         if (currentPathIndex >= dollyCarts.Length)
