@@ -39,6 +39,11 @@ public class VRPathMover : MonoBehaviour
     [Tooltip("Seconds to ease-in/out the sway motion at start and end")]
     public float swayEaseTime = 0.83f;
 
+    [Header("Carry Object Requirement (Track 4 Using Tags)")]
+    public string requiredTag = "Sugar";
+    private bool mustHoldObjectActive = false;
+    private bool isHoldingObject = false;
+
     private int currentPathIndex = -1;
     private CinemachineDollyCart activeCart;
 
@@ -73,7 +78,7 @@ public class VRPathMover : MonoBehaviour
     private void Update()
     {
         // Test key
-        if (Input.GetKeyDown(KeyCode.T) || OVRInput.GetDown(OVRInput.Button.One))
+        if (Input.GetKeyDown(KeyCode.T))
             StartNextPath();
 
         if (!moving) return;
