@@ -50,21 +50,18 @@ public class VRPathMover : MonoBehaviour
 
     private bool HasSugarInHand()
     {
-        var grabbers = FindObjectsOfType<OVRGrabber>();
+        OVRGrabbable[] grabbables = FindObjectsOfType<OVRGrabbable>();
 
-        foreach (var g in grabbers)
+        foreach (var grabbable in grabbables)
         {
-            Debug.Log("Checking hand: " + g.name +
-                      " | Object: " + (g.grabbedObject ? g.grabbedObject.name : "None"));
-
-            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar"))
+            if (grabbable.isGrabbed && grabbable.CompareTag("Sugar"))
             {
-                Debug.Log("Sugar FOUND!");
+                Debug.Log("Sugar is in hand!");
                 return true;
             }
         }
 
-        Debug.Log("Sugar NOT found.");
+        Debug.Log("Sugar NOT in hand.");
         return false;
     }
 
@@ -85,7 +82,6 @@ public class VRPathMover : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("VRPathMover started. Current path index = " + currentPathIndex);
         if (dollyCarts == null || dollyCarts.Length == 0)
         {
             Debug.LogError("[VRPathMoverHumanized] DollyCart not assigned!");
