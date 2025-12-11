@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Cinemachine;
 
 /// <summary>
@@ -8,7 +8,7 @@ using Cinemachine;
 public class VRPathMover : MonoBehaviour
 {
     [Header("Cinemachine & OVR Setup")]
-    public CinemachineDollyCart dollyCart;   // Cinemachine DollyCart component
+    public CinemachineDollyCart[] dollyCarts;   // Cinemachine DollyCart component
     public Transform ovrRig;                // OVRCameraRig Transform (child of DollyCart)
     public Transform swayTarget;            // Child transform to receive sway/bounce
 
@@ -19,25 +19,28 @@ public class VRPathMover : MonoBehaviour
 
     [Header("Human Motion Settings")]
     [Tooltip("Vertical bounce amplitude (meters)")]
-    public float bobAmplitude = 0.03f;
+    public float bobAmplitude = 0.01f;
 
     [Tooltip("Vertical bounce frequency (Hz)")]
-    public float bobFrequency = 2f;
+    public float bobFrequency = 0.9f;
 
     [Tooltip("Side sway amplitude (meters)")]
-    public float swayAmplitude = 0.025f;
+    public float swayAmplitude = 0.015f;
 
     [Tooltip("Side sway frequency (Hz)")]
-    public float swayFrequency = 1f;
+    public float swayFrequency = 0.6f;
 
     [Tooltip("Head lean angle (degrees)")]
-    public float leanAngle = 2f;
+    public float leanAngle = 0.1f;
 
     [Tooltip("Random noise intensity for small jitters")]
     public float noiseIntensity = 0.004f;
 
     [Tooltip("Seconds to ease-in/out the sway motion at start and end")]
-    public float swayEaseTime = 0.5f;
+    public float swayEaseTime = 0.83f;
+
+    private int currentPathIndex = -1;
+    private CinemachineDollyCart activeCart;
 
     // Internal state
     private float elapsedTime;
@@ -45,9 +48,45 @@ public class VRPathMover : MonoBehaviour
     private Quaternion lockedRotation;
     private Vector3 initialSwayLocalPos;
 
+    private bool HasSugarInHand()
+    {
+        var grabbers = FindObjectsOfType<OVRGrabber>();
+
+        foreach (var g in grabbers)
+        {
+            Debug.Log("Checking hand: " + g.name +
+                      " | Object: " + (g.grabbedObject ? g.grabbedObject.name : "None"));
+
+            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar"))
+            {
+                Debug.Log("Sugar FOUND!");
+                return true;
+            }
+        }
+
+        Debug.Log("Sugar NOT found.");
+        return false;
+    }
+
+
+    /*private bool HasSugarInHand() {
+
+        var grabbers = FindObjectsOfType<OVRGrabber>();
+
+        foreach (var g in grabbers) {
+            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar")) {
+                return true;
+            }
+        }
+        return false;
+    }*/
+
+    //Handling Camera Jumping
+
     private void Start()
     {
-        if (dollyCart == null)
+        Debug.Log("VRPathMover started. Current path index = " + currentPathIndex);
+        if (dollyCarts == null || dollyCarts.Length == 0)
         {
             Debug.LogError("[VRPathMoverHumanized] DollyCart not assigned!");
             enabled = false;
@@ -56,9 +95,6 @@ public class VRPathMover : MonoBehaviour
 
         if (ovrRig == null)
             Debug.LogWarning("[VRPathMoverHumanized] OVRCameraRig not assigned (movement will still work).");
-
-        // Store locked rotation
-        lockedRotation = dollyCart.transform.rotation;
 
         // Default sway target = ovrRig if not set
         if (swayTarget == null && ovrRig != null)
@@ -71,24 +107,23 @@ public class VRPathMover : MonoBehaviour
     private void Update()
     {
         // Test key
-        if (Input.GetKeyDown(KeyCode.T) || OVRInput.GetDown(OVRInput.Button.One))
-            StartMovement();
+        if (Input.GetKeyDown(KeyCode.T))
+            StartNextPath();
 
         if (!moving) return;
+
+        if (currentPathIndex == 3 && HasSugarInHand())
+        {
+            return;
+        }
 
         elapsedTime += Time.deltaTime;
         float t = Mathf.Clamp01(elapsedTime / Mathf.Max(duration, 0.01f));
         float eased = easeCurve.Evaluate(t);
 
         // Move along path
-        if (dollyCart.m_Path != null)
-            dollyCart.m_Position = eased * dollyCart.m_Path.PathLength;
-        else
-        {
-            Debug.LogError("[VRPathMoverHumanized] DollyCart has no path!");
-            EndMovement();
-            return;
-        }
+        if (activeCart != null && activeCart.m_Path != null)
+            activeCart.m_Position = eased * activeCart.m_Path.PathLength;
 
         // Human-like bounce, sway, lean
         ApplyHumanMotion(eased);
@@ -100,8 +135,73 @@ public class VRPathMover : MonoBehaviour
     private void LateUpdate()
     {
         // Enforce locked world rotation so player isn't rotated
-        if (dollyCart != null)
-            dollyCart.transform.rotation = lockedRotation;
+        if (activeCart != null)
+            activeCart.transform.rotation = lockedRotation;
+    }
+
+    public void StartNextPath()
+    {
+        Debug.Log("StartNextPath() called. Current index BEFORE increment = " + currentPathIndex);
+
+        if (currentPathIndex + 1 == 3)
+        {
+            if (!HasSugarInHand())
+            {
+                Debug.Log("Player does not have sugar, cannot proceed to path 3");
+                return;
+            }
+        }
+
+        currentPathIndex++;
+
+        if (currentPathIndex >= dollyCarts.Length)
+        {
+            Debug.LogWarning("All paths complete");
+            return;
+        }
+
+        activeCart = dollyCarts[currentPathIndex];
+
+        if (activeCart == null || activeCart.m_Path == null)
+        {
+            Debug.LogError("[VRPathMoverHumanized] DollyCart or its path is not assigned!");
+            return;
+        }
+
+        // ⭐ NEW — Move OVR rig to this dolly cart
+        if (ovrRig != null)
+        {
+            ovrRig.SetParent(activeCart.transform, true);
+            ovrRig.localPosition = Vector3.zero;
+            ovrRig.localRotation = Quaternion.identity;
+        }
+
+        // Lock initial rotation to prevent turning (optional, can remove later)
+        lockedRotation = activeCart.transform.rotation;
+
+        // Reset start position along path
+        float startPos = startPathPercent * activeCart.m_Path.PathLength;
+        activeCart.m_Position = startPos;
+        activeCart.transform.position = activeCart.m_Path.EvaluatePositionAtUnit(startPos, activeCart.m_PositionUnits);
+        activeCart.transform.rotation = lockedRotation;
+
+        elapsedTime = 0f;
+        moving = true;
+    }
+
+
+
+    private void EndMovement()
+    {
+        moving = false;
+
+
+        // Reset sway
+        if (swayTarget != null)
+        {
+            swayTarget.localPosition = initialSwayLocalPos;
+            swayTarget.localRotation = Quaternion.identity;
+        }
     }
 
     private void ApplyHumanMotion(float eased)
@@ -130,40 +230,5 @@ public class VRPathMover : MonoBehaviour
         // Gentle lean with sway
         float leanZ = Mathf.Sin(phaseSway) * leanAngle * intensity;
         swayTarget.localRotation = Quaternion.Euler(0f, 0f, leanZ);
-    }
-
-    public void StartMovement()
-    {
-       
-        // Reset and align to start of path
-        if (dollyCart != null && dollyCart.m_Path != null)
-        {
-            float startPos = startPathPercent * dollyCart.m_Path.PathLength;
-            dollyCart.m_Position = startPos;
-            dollyCart.transform.position = dollyCart.m_Path.EvaluatePositionAtUnit(startPos, dollyCart.m_PositionUnits);
-            dollyCart.transform.rotation = lockedRotation;
-        }
-
-        elapsedTime = 0f;
-        moving = true;
-    }
-
-    private void EndMovement()
-    {
-        moving = false;
-
-
-        // Reset sway
-        if (swayTarget != null)
-        {
-            swayTarget.localPosition = initialSwayLocalPos;
-            swayTarget.localRotation = Quaternion.identity;
-        }
-    }
-
-    private void OnValidate()
-    {
-        if (duration < 0.1f) duration = 0.1f;
-        if (swayEaseTime < 0.1f) swayEaseTime = 0.1f;
     }
 }
