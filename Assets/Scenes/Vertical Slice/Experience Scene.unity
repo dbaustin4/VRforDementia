@@ -565,6 +565,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 104410568}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &69363116 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4239887004661299762, guid: f0065f9bd70e3814e875ba3f9fb53047,
+    type: 3}
+  m_PrefabInstance: {fileID: 1091485331}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37eb2dc55384d764e9b61a4f4e22b830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &90544497 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 498078, guid: 39cce5eade83562498c854658c6a4060,
@@ -2360,7 +2372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 293145808}
   - component: {fileID: 293145807}
-  - component: {fileID: 293145809}
+  - component: {fileID: 293145810}
   m_Layer: 0
   m_Name: Trigger Inside/outside
   m_TagString: Untagged
@@ -2381,6 +2393,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indoorSounds: {fileID: 2140580732}
+  outsideSounds: {fileID: 1580839427}
 --- !u!4 &293145808
 Transform:
   m_ObjectHideFlags: 0
@@ -2390,25 +2403,33 @@ Transform:
   m_GameObject: {fileID: 293145806}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.117872, y: -13.013186, z: -2.317325}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 2.487, y: 3.58, z: -2.401}
+  m_LocalScale: {x: 0.36895046, y: 1.5657, z: 2.027353}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &293145809
-MonoBehaviour:
+--- !u!65 &293145810
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 293145806}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90a773defb6a25e429457d3f95d1cc48, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outsideSoundManager: {fileID: 1580839427}
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &322084697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4130,7 +4151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd157fc9faa8c4418c0d73054ce9e70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moodDirector: {fileID: 0}
+  moodDirector: {fileID: 69363116}
   outsideParent: {fileID: 1580839426}
   insideParent: {fileID: 2140580733}
   transitionSeconds: 1
@@ -8681,11 +8702,11 @@ Transform:
   m_GameObject: {fileID: 963389127}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.794, y: 0.022, z: 2.76}
+  m_LocalPosition: {x: -1.8320003, y: 2.9220002, z: -3.214}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2140580733}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &963389129
 AudioSource:
@@ -14631,8 +14652,11 @@ MonoBehaviour:
   maxSimultaneous: 2
   multiSoundChance: 0.35
   maxStartOffsetSeconds: 0.35
-  baseVolume: 0.25
+  baseVolume: 0.569
   pitchVariation: 0.04
+  indoorVolumeMultiplier: 0.107
+  indoorLowPassCutoff: 1200
+  outdoorLowPassCutoff: 22000
   playerIsIndoors: 0
 --- !u!1001 &1583977397
 PrefabInstance:
@@ -17266,11 +17290,11 @@ Transform:
   m_GameObject: {fileID: 1841756236}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.85, y: 1.219, z: -1.49}
+  m_LocalPosition: {x: -2.888, y: 4.119, z: -7.4639997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2140580733}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1841756238
 AudioSource:
@@ -19630,7 +19654,7 @@ MonoBehaviour:
   maxSimultaneous: 4
   multiSoundChance: 0.35
   maxStartOffsetSeconds: 0.25
-  baseOneShotVolume: 0.22
+  baseOneShotVolume: 0.613
   pitchVariation: 0.04
   playLoopingAmbienceWhenActive: 1
   loopVolume: 0.15
@@ -19654,8 +19678,6 @@ Transform:
   - {fileID: 1388187908}
   - {fileID: 140549340}
   - {fileID: 1631779011}
-  - {fileID: 963389128}
-  - {fileID: 1841756237}
   - {fileID: 1884496643}
   m_Father: {fileID: 488993496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -19770,5 +19792,7 @@ SceneRoots:
   - {fileID: 1349398656}
   - {fileID: 1091485331}
   - {fileID: 891788670}
+  - {fileID: 963389128}
+  - {fileID: 1841756237}
   - {fileID: 488993496}
   - {fileID: 293145808}
