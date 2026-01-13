@@ -19627,7 +19627,7 @@ MonoBehaviour:
   minDelay: 6
   maxDelay: 22
   minSimultaneous: 1
-  maxSimultaneous: 2
+  maxSimultaneous: 4
   multiSoundChance: 0.35
   maxStartOffsetSeconds: 0.25
   baseOneShotVolume: 0.22
