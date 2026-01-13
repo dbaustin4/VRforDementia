@@ -10258,7 +10258,7 @@ PrefabInstance:
     - target: {fileID: 4239887004661299762, guid: f0065f9bd70e3814e875ba3f9fb53047,
         type: 3}
       propertyPath: _selectedMood
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4929897194016287135, guid: f0065f9bd70e3814e875ba3f9fb53047,
         type: 3}
@@ -19669,7 +19669,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.97002, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1601219346}
