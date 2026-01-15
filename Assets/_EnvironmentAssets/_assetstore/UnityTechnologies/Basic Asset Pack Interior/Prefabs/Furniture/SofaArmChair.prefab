@@ -25,6 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69932169085086294}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.139742, y: 2.139742, z: 2.139742}
@@ -32,7 +33,6 @@ Transform:
   m_Children:
   - {fileID: 9211981819554111655}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4331470902392733513
 MeshFilter:
@@ -89,6 +89,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 843195965673320684}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: adf017f7adaf78b49989e92ad9bb888a,
@@ -172,6 +173,9 @@ PrefabInstance:
       value: SofaCusion
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adf017f7adaf78b49989e92ad9bb888a, type: 3}
 --- !u!4 &9211981819554111655 stripped
 Transform:
