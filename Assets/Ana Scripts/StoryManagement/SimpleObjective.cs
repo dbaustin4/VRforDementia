@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SimpleObjective : MonoBehaviour
 {
-    public StoryGameManager story;
+    public NarrativeDirector story;
 
     // Example: call this from a UI Button, XR event, or OnTriggerEnter, etc.
     public void Complete()

@@ -5,8 +5,8 @@ public class MoodFXOnGrab : MonoBehaviour
 {
     [Header("References")]
     public Grabbable grabbable;                // The grabbable on this object
-    public MoodFXDirector moodFXDirector;      // Reference to your MoodFXDirector prefab
-    public MoodFXDirector.MoodId moodToTrigger = MoodFXDirector.MoodId.Happiness;
+    public VisualMoodDirector moodFXDirector;      // Reference to your MoodFXDirector prefab
+    public VisualMoodDirector.MoodId moodToTrigger = VisualMoodDirector.MoodId.Happiness;
     public float blendDuration = 1f;
 
     private void Start()
@@ -37,7 +37,7 @@ public class MoodFXOnGrab : MonoBehaviour
         }
         else if (evt.Type == PointerEventType.Unselect)
         {
-            moodFXDirector.CrossfadeTo(MoodFXDirector.MoodId.Neutral, 1f);
+            moodFXDirector.CrossfadeTo(VisualMoodDirector.MoodId.Neutral, 1f);
         }
 
     }

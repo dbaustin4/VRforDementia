@@ -2,52 +2,80 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(AudioFXDirector))]
+[CustomEditor(typeof(AudioMoodDirector))]
 public class AudioFXDirectorEditor : Editor
 {
+    // Serialized fields that exist on AudioMoodDirector
+    SerializedProperty ambienceSourceProp;
+    SerializedProperty musicSourceProp;
+    SerializedProperty sfxSourceProp;
+
+    SerializedProperty moodPresetsProp;
+    SerializedProperty startMoodProp;
+    SerializedProperty defaultFadeDurationProp;
+    SerializedProperty logTransitionsProp;
+
+    // Local (editor-only) test controls
+    private AudioMoodDirector.MoodId previewMood = AudioMoodDirector.MoodId.Neutral;
+    private float previewFadeSeconds = 1.5f;
+
+    void OnEnable()
+    {
+        ambienceSourceProp = serializedObject.FindProperty("ambienceSource");
+        musicSourceProp = serializedObject.FindProperty("musicSource");
+        sfxSourceProp = serializedObject.FindProperty("sfxSource");
+
+        moodPresetsProp = serializedObject.FindProperty("moodPresets");
+        startMoodProp = serializedObject.FindProperty("startMood");
+        defaultFadeDurationProp = serializedObject.FindProperty("defaultFadeDuration");
+        logTransitionsProp = serializedObject.FindProperty("logTransitions");
+    }
+
     public override void OnInspectorGUI()
     {
-        // Draw the normal inspector first
-        DrawDefaultInspector();
+        serializedObject.Update();
+        var director = (AudioMoodDirector)target;
 
-        var dir = (AudioFXDirector)target;
+        EditorGUILayout.LabelField("Audio Sources", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(ambienceSourceProp);
+        EditorGUILayout.PropertyField(musicSourceProp);
+        EditorGUILayout.PropertyField(sfxSourceProp);
 
-        if (!dir.enableTestingTools)
-            return;
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Mood Presets", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(moodPresetsProp, true);
 
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Testing / Preview", EditorStyles.boldLabel);
+        EditorGUILayout.Space(8);
+        EditorGUILayout.LabelField("Defaults", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(startMoodProp, new GUIContent("Start Mood"));
+        EditorGUILayout.PropertyField(defaultFadeDurationProp, new GUIContent("Default Fade Duration (s)"));
 
-        EditorGUILayout.HelpBox(
-            "Use this section to preview moods without StoryGameManager.\n" +
-            "• Select a Preview Mood and click 'Apply Preview Mood'.\n" +
-            "• In Play Mode, press keys 1–6 to switch moods quickly.",
-            MessageType.Info
-        );
+        EditorGUILayout.Space(8);
+        EditorGUILayout.PropertyField(logTransitionsProp, new GUIContent("Log Transitions"));
 
-        // Preview mood picker & fade
-        dir.previewMood = (AudioFXDirector.MoodId)EditorGUILayout.EnumPopup("Preview Mood", dir.previewMood);
-        dir.previewFadeSeconds = EditorGUILayout.Slider("Fade Seconds", dir.previewFadeSeconds, 0.1f, 10f);
+        EditorGUILayout.Space(10);
+        EditorGUILayout.LabelField("Testing (Editor Only)", EditorStyles.boldLabel);
 
-        EditorGUILayout.Space();
+        previewMood = (AudioMoodDirector.MoodId)
+            EditorGUILayout.EnumPopup("Preview Mood", previewMood);
+        previewFadeSeconds = EditorGUILayout.FloatField("Preview Fade Seconds", previewFadeSeconds);
 
-        if (GUILayout.Button("Apply Preview Mood"))
+        using (new EditorGUILayout.HorizontalScope())
         {
-            if (Application.isPlaying)
+            if (GUILayout.Button("Apply Preview (Instant)"))
             {
-                dir.ApplyPreviewMood();
+                director.SetMoodInstant(previewMood);
+                EditorUtility.SetDirty(director);
             }
-            else
+
+            if (GUILayout.Button("Crossfade Preview"))
             {
-                Debug.LogWarning("[AudioFXDirector] Preview only works in Play Mode.");
+                director.CrossfadeTo(previewMood, previewFadeSeconds);
+                EditorUtility.SetDirty(director);
             }
         }
 
-        EditorGUILayout.Space();
-        dir.enableKeyboardShortcuts = EditorGUILayout.Toggle(
-            "Enable Keyboard Shortcuts (1–6)",
-            dir.enableKeyboardShortcuts
-        );
+        serializedObject.ApplyModifiedProperties();
     }
 }
 #endif
