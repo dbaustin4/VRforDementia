@@ -33,6 +33,12 @@ public class MoodFXDirector : MonoBehaviour
         public Color gain;   // highlights
     }
 
+    // ---------- NEW: Mood event ----------
+    /// <summary>
+    /// Fired when a mood is applied. For crossfades, it fires when the blend completes.
+    /// </summary>
+    public event Action<MoodId> OnMoodApplied;
+
     // ---------- Inspector ----------
     [Header("Volume (assign OR leave empty to auto-find/create)")]
     public Volume targetVolume;
@@ -92,13 +98,10 @@ public class MoodFXDirector : MonoBehaviour
         Happiness.vignetteSmoothness = 0.65f;
         Happiness.colorFilter = new Color(1.10f, 1.05f, 0.95f, 1f);  // gentle warm tone, clean whites
         Happiness.lift = new Color(0.01f, 0.01f, 0.00f, 0f);        // subtle brightness in shadows
-        Happiness.gamma = new Color(0.02f, 0.02f, 0.00f, 0f);        // mids keep warmth
+        Happiness.gamma = new Color(0.02f, 0.02f, 0.00f, 0f);       // mids keep warmth
         Happiness.gain = new Color(0.06f, 0.04f, 0.02f, 0f);        // radiant highlights
 
-
-
         // ===== SADNESS — darker/colder, clearly muted =====
-        // Feedback: make it darker, more muted, more distinct from Triggered.
         Sadness = Neutral;
         Sadness.exposure = -0.35f;
         Sadness.contrast = -5f;
@@ -107,7 +110,7 @@ public class MoodFXDirector : MonoBehaviour
         Sadness.vignetteIntensity = 0.32f;
         Sadness.vignetteSmoothness = 0.65f;
         Sadness.colorFilter = new Color(0.82f, 0.90f, 1.08f, 1f);    // cool, slightly bluish
-        Sadness.lift = new Color(-0.03f, -0.03f, -0.02f, 0f);       // heavier shadows
+        Sadness.lift = new Color(-0.03f, -0.03f, -0.02f, 0f);        // heavier shadows
         Sadness.gamma = new Color(-0.02f, -0.02f, -0.02f, 0f);       // dimmer mids
 
         // NOSTALGIC — deep sepia memory filter
@@ -119,11 +122,9 @@ public class MoodFXDirector : MonoBehaviour
         Nostalgic.vignetteIntensity = 0.28f;               // soft edge darkening
         Nostalgic.vignetteSmoothness = 0.70f;
         Nostalgic.colorFilter = new Color(1.20f, 1.05f, 0.80f, 1f);  // strong golden sepia
-        Nostalgic.lift = new Color(0.06f, 0.04f, 0.02f, 0f);        // lifted blacks (film fade)
+        Nostalgic.lift = new Color(0.06f, 0.04f, 0.02f, 0f);         // lifted blacks (film fade)
         Nostalgic.gamma = new Color(0.02f, 0.01f, -0.01f, 0f);       // soft mids, warm
-        Nostalgic.gain = new Color(0.04f, 0.02f, -0.02f, 0f);       // warm, creamy highlights
-
-
+        Nostalgic.gain = new Color(0.04f, 0.02f, -0.02f, 0f);        // warm, creamy highlights
 
         // FURIOUS — brutal, cold-red (crimson), oppressive
         Furious = Neutral;
@@ -133,12 +134,10 @@ public class MoodFXDirector : MonoBehaviour
         Furious.bloomIntensity = 0.05f;                    // no cozy glow
         Furious.vignetteIntensity = 0.55f;                 // heavy tunnel
         Furious.vignetteSmoothness = 0.60f;
-        Furious.colorFilter = new Color(1.12f, 0.78f, 0.92f, 1f);   // cold red (leaning magenta/blue)
-        Furious.lift = new Color(-0.07f, -0.06f, -0.08f, 0f);      // cold dark shadows
-        Furious.gamma = new Color(-0.01f, -0.02f, 0.00f, 0f);       // damp greens a touch
-        Furious.gain = new Color(0.10f, -0.02f, 0.02f, 0f);        // searing crimson highlights
-
-
+        Furious.colorFilter = new Color(1.12f, 0.78f, 0.92f, 1f);    // cold red (leaning magenta/blue)
+        Furious.lift = new Color(-0.07f, -0.06f, -0.08f, 0f);        // cold dark shadows
+        Furious.gamma = new Color(-0.01f, -0.02f, 0.00f, 0f);        // damp greens a touch
+        Furious.gain = new Color(0.10f, -0.02f, 0.02f, 0f);          // searing crimson highlights
 
         // TRIGGERED — anxious, purple-leaning tension
         Triggered = Neutral;
@@ -148,11 +147,10 @@ public class MoodFXDirector : MonoBehaviour
         Triggered.bloomIntensity = 0.06f;                  // crisp, no softness
         Triggered.vignetteIntensity = 0.50f;               // claustrophobic
         Triggered.vignetteSmoothness = 0.62f;
-        Triggered.colorFilter = new Color(0.96f, 0.88f, 1.10f, 1f); // purple bias (uneasy)
-        Triggered.lift = new Color(-0.05f, -0.03f, -0.01f, 0f);    // shadows closing in
-        Triggered.gamma = new Color(0.00f, 0.01f, 0.03f, 0f);       // blue/purple mids
-        Triggered.gain = new Color(0.02f, 0.00f, 0.06f, 0f);       // nervous highlights
-
+        Triggered.colorFilter = new Color(0.96f, 0.88f, 1.10f, 1f);  // purple bias (uneasy)
+        Triggered.lift = new Color(-0.05f, -0.03f, -0.01f, 0f);      // shadows closing in
+        Triggered.gamma = new Color(0.00f, 0.01f, 0.03f, 0f);        // blue/purple mids
+        Triggered.gain = new Color(0.02f, 0.00f, 0.06f, 0f);         // nervous highlights
     }
 
     private void OnValidate()
@@ -177,6 +175,9 @@ public class MoodFXDirector : MonoBehaviour
         var basePreset = Neutral;
         var target = GetPreset(mood);
         SetMoodValues(basePreset, target, 1f);
+
+        // ---------- NEW: notify listeners ----------
+        OnMoodApplied?.Invoke(mood);
     }
 
     public void CrossfadeTo(MoodId mood, float duration = 1f)
@@ -250,6 +251,11 @@ public class MoodFXDirector : MonoBehaviour
             yield return null;
         }
         SetMoodValues(basePreset, target, 1f);
+
+        // ---------- NEW: notify listeners when blend finishes ----------
+        OnMoodApplied?.Invoke(mood);
+
+        blendRoutine = null;
     }
 
     private void StopAllBlends()
@@ -303,4 +309,3 @@ public class MoodFXDirector : MonoBehaviour
         }
     }
 }
-    
