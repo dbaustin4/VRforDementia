@@ -58,7 +58,7 @@ public class HandStayToLoad : MonoBehaviour
         }
 
             int currentScene = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(currentScene + 1);
+            SceneManager.LoadScene("Experience Scene");
     }
 
 }
