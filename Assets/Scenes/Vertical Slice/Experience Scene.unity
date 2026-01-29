@@ -3332,7 +3332,6 @@ MonoBehaviour:
   requestEyeTrackingPermissionOnStartup: 0
   requestScenePermissionOnStartup: 1
   requestRecordAudioPermissionOnStartup: 0
-  requestPassthroughCameraAccessPermissionOnStartup: 0
   _localDimming: 1
   _trackingOriginType: 0
   usePositionTracking: 1
@@ -13348,7 +13347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1349398650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13371,7 +13370,6 @@ MonoBehaviour:
   _rigidbody: {fileID: 1349398651}
   _kinematicWhileSelected: 1
   _throwWhenUnselected: 1
-  _forceKinematicDisabled: 0
 --- !u!54 &1349398651
 Rigidbody:
   m_ObjectHideFlags: 0

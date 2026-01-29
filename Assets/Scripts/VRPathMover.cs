@@ -48,38 +48,6 @@ public class VRPathMover : MonoBehaviour
     private Quaternion lockedRotation;
     private Vector3 initialSwayLocalPos;
 
-    private bool HasSugarInHand()
-    {
-        OVRGrabbable[] grabbables = FindObjectsOfType<OVRGrabbable>();
-
-        foreach (var grabbable in grabbables)
-        {
-            if (grabbable.isGrabbed && grabbable.CompareTag("Sugar"))
-            {
-                Debug.Log("Sugar is in hand!");
-                return true;
-            }
-        }
-
-        Debug.Log("Sugar NOT in hand.");
-        return false;
-    }
-
-
-    /*private bool HasSugarInHand() {
-
-        var grabbers = FindObjectsOfType<OVRGrabber>();
-
-        foreach (var g in grabbers) {
-            if (g.grabbedObject != null && g.grabbedObject.CompareTag("Sugar")) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
-    //Handling Camera Jumping
-
     private void Start()
     {
         if (dollyCarts == null || dollyCarts.Length == 0)
@@ -98,6 +66,8 @@ public class VRPathMover : MonoBehaviour
 
         if (swayTarget != null)
             initialSwayLocalPos = swayTarget.localPosition;
+
+        StartNextPath();
     }
 
     private void Update()
@@ -107,11 +77,6 @@ public class VRPathMover : MonoBehaviour
             StartNextPath();
 
         if (!moving) return;
-
-        if (currentPathIndex == 3 && HasSugarInHand())
-        {
-            return;
-        }
 
         elapsedTime += Time.deltaTime;
         float t = Mathf.Clamp01(elapsedTime / Mathf.Max(duration, 0.01f));
@@ -137,17 +102,6 @@ public class VRPathMover : MonoBehaviour
 
     public void StartNextPath()
     {
-        Debug.Log("StartNextPath() called. Current index BEFORE increment = " + currentPathIndex);
-
-        if (currentPathIndex + 1 == 3)
-        {
-            if (!HasSugarInHand())
-            {
-                Debug.Log("Player does not have sugar, cannot proceed to path 3");
-                return;
-            }
-        }
-
         currentPathIndex++;
 
         if (currentPathIndex >= dollyCarts.Length)
@@ -198,6 +152,7 @@ public class VRPathMover : MonoBehaviour
             swayTarget.localPosition = initialSwayLocalPos;
             swayTarget.localRotation = Quaternion.identity;
         }
+        Invoke(nameof(StartNextPath), 0.5f);
     }
 
     private void ApplyHumanMotion(float eased)
