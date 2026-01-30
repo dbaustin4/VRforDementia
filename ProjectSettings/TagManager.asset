@@ -12,6 +12,7 @@ TagManager:
   - Palm
   - Hand
   - Sugar
+  - LeftPalm
   layers:
   - Default
   - TransparentFX
